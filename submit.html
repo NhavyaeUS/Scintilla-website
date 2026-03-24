@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Submit — Scintilla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Khand:wght@400;500;600;700&family=Hind:wght@300;400;500;600&family=Fragment+Mono:ital@0;1&family=Martian+Mono:wght@300;400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F5EDD8;
+    --dark: #111111;
+    --blue: #3D47C9;
+    --teal: #3A7D8C;
+    --white: #FFFFFF;
+    --gray-light: #e8e0cc;
+    --gray-border: #ccc4b0;
+    --mono: 'Fragment Mono', monospace;
+    --heading: 'Khand', sans-serif;
+    --sub: 'Hind', sans-serif;
+    --team: 'Martian Mono', monospace;
+    --section: 'Oswald', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); color: var(--dark); font-family: var(--mono); min-height: 100vh; }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    background: var(--dark);
+    color: var(--white);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .topbar-logo {
+    font-family: var(--heading);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .topbar-links { display: flex; gap: 32px; }
+  .topbar-links a { color: rgba(255,255,255,0.8); text-decoration: none; letter-spacing: 0.5px; }
+  .topbar-links a:hover { color: var(--white); }
+
+  /* ─── BREADCRUMB ─── */
+  .breadcrumb {
+    padding: 14px 40px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* ─── PAGE TITLE ─── */
+  .page-title-bar {
+    padding: 40px 40px 10px;
+  }
+  .page-title {
+    font-family: var(--section);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+  }
+  .page-subtitle {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #777;
+    margin-top: 4px;
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 0;
+    padding: 0 40px 60px;
+    align-items: start;
+  }
+
+  /* ─── FORM PANEL ─── */
+  .form-panel {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    padding: 36px 32px;
+    margin-top: 28px;
+  }
+  .form-section-head {
+    font-family: var(--section);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .form-row-full { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #555;
+  }
+  .form-input, .form-select, .form-textarea {
+    background: var(--cream);
+    border: 1px solid var(--gray-border);
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--blue);
+  }
+  .form-select-wrap { position: relative; }
+  .form-select-wrap::after {
+    content: '∨';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 12px;
+    color: #888;
+  }
+  .form-textarea { resize: vertical; min-height: 90px; }
+  .form-section-gap { margin-top: 28px; }
+
+  /* Upload / Paste toggle */
+  .upload-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 12px;
+    border: 1px solid var(--gray-border);
+    overflow: hidden;
+    width: fit-content;
+  }
+  .toggle-btn {
+    background: var(--cream);
+    border: none;
+    padding: 8px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.15s, color 0.15s;
+  }
+  .toggle-btn.active {
+    background: var(--dark);
+    color: var(--white);
+  }
+  .upload-zone {
+    border: 1.5px dashed var(--gray-border);
+    padding: 28px 20px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    background: var(--cream);
+    transition: border-color 0.2s;
+  }
+  .upload-zone:hover { border-color: var(--blue); }
+  .upload-zone input { display: none; }
+  .upload-zone-label { display: block; cursor: pointer; }
+  .paste-zone { display: none; }
+  .paste-zone.visible { display: block; }
+  .upload-zone.hidden { display: none; }
+
+  /* Consent */
+  .consent-block { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .consent-item { display: flex; gap: 10px; align-items: flex-start; }
+  .consent-item input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--blue);
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+  .consent-item label { font-family: var(--mono); font-size: 13px; line-height: 1.5; cursor: pointer; }
+
+  /* Add button */
+  .add-btn {
+    margin-top: 28px;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 14px 32px;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+  }
+  .add-btn:hover { background: #2d37b0; }
+
+  /* ─── CART PANEL ─── */
+  .cart-panel {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    padding: 28px 24px;
+    margin-top: 28px;
+    position: sticky;
+    top: 20px;
+  }
+  .cart-title {
+    font-family: var(--section);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .cart-empty {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    padding: 24px 0;
+  }
+  .cart-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .cart-item:last-of-type { border-bottom: none; }
+  .cart-item-info { flex: 1; }
+  .cart-item-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .cart-item-cat {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #777;
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .cart-remove {
+    background: none;
+    border: 1px solid var(--gray-border);
+    width: 24px; height: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #888;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .cart-remove:hover { border-color: #c00; color: #c00; }
+  .cart-count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .submit-all-btn {
+    margin-top: 20px;
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+  }
+  .submit-all-btn:hover { background: #333; }
+  .submit-all-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+  /* Success message */
+  .success-msg {
+    display: none;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+  .success-msg.visible { display: block; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 860px) {
+    .main-layout { grid-template-columns: 1fr; padding: 0 20px 60px; }
+    .topbar, .breadcrumb, .page-title-bar { padding-left: 20px; padding-right: 20px; }
+    .cart-panel { position: static; }
+    .form-row { grid-template-columns: 1fr; }
+    .topbar-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ TOPBAR ══════════════════ -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">SCINTILLA</a>
+  <div class="topbar-links">
+    <a href="index.html#spark">About</a>
+    <a href="index.html#publish">What We Publish</a>
+    <a href="index.html#prev-edition">First Edition</a>
+    <a href="index.html#team">Team</a>
+  </div>
+</div>
+
+<!-- ══════════════════ BREADCRUMB ══════════════════ -->
+<div class="breadcrumb">
+  <a href="index.html">Home</a> &gt; <a href="#">Submit</a> &gt; Submission Form
+</div>
+
+<!-- ══════════════════ PAGE TITLE ══════════════════ -->
+<div class="page-title-bar">
+  <div class="page-title">Submit Your Work</div>
+  <div class="page-subtitle">Add one or more pieces to your submission cart, then submit all at once.</div>
+</div>
+
+<!-- ══════════════════ MAIN LAYOUT ══════════════════ -->
+<div class="main-layout">
+
+  <!-- LEFT: FORM -->
+  <div>
+    <div class="form-panel">
+
+      <!-- Basic Details -->
+      <div class="form-section-head">Basic Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="fullName" placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="email" placeholder="your@email.com" />
+        </div>
+      </div>
+
+      <!-- Academic Details -->
+      <div class="form-section-gap">
+        <div class="form-section-head">Academic Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Course</label>
+            <div class="form-select-wrap">
+              <select class="form-select" id="course">
+                <option value="" disabled selected>Select course</option>
+                <option>BTech CSE (IoT)</option>
+                <option>BTech CSE (AIDS)</option>
+                <option>BTech CSE (Cybersecurity)</option>
+                <option>B.Com</option>
+                <option>B.Sc Economics (Data Science)</option>
+                <option>B.Com (Professional Accounting)</option>
+                <option>B.Com / B.Com (Hons.)</option>
+                <option>5-Year Integrated B.A., LL.B. Program</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Year</label>
+            <div class="form-select-wrap">
+              <select class="form-select" id="year">
+                <option value="" disabled selected>Select year</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Details -->
+      <div class="form-section-gap">
+        <div class="form-section-head">Submission Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <div class="form-select-wrap">
+              <select class="form-select" id="category">
+                <option value="" disabled selected>Select category</option>
+                <option>Poetry</option>
+                <option>Short Story</option>
+                <option>Article</option>
+                <option>Artwork</option>
+                <option>Photography</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title of Submission</label>
+            <input class="form-input" type="text" id="title" placeholder="Title of your work" />
+          </div>
+        </div>
+        <div class="form-row form-row-full">
+          <div class="form-group">
+            <label class="form-label">Description / Caption (optional)</label>
+            <textarea class="form-textarea" id="description" placeholder="A brief description or caption for your work..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload -->
+      <div class="form-section-gap">
+        <div class="form-section-head">Submission Upload</div>
+        <div class="upload-toggle">
+          <button class="toggle-btn active" id="toggleUpload" onclick="switchTab('upload')">Upload File</button>
+          <button class="toggle-btn" id="togglePaste" onclick="switchTab('paste')">Paste Content</button>
+        </div>
+        <div class="upload-zone" id="uploadZone">
+          <label class="upload-zone-label" for="fileInput">
+            Click to upload or drag and drop<br>
+            <span style="font-size:11px;color:#aaa;margin-top:6px;display:block;">PDF, DOCX, JPG, PNG accepted</span>
+          </label>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.jpg,.jpeg,.png" />
+        </div>
+        <div class="paste-zone" id="pasteZone">
+          <textarea class="form-textarea" id="pasteContent" rows="6" placeholder="Paste your content here..."></textarea>
+        </div>
+      </div>
+
+      <!-- Consent -->
+      <div class="form-section-gap">
+        <div class="form-section-head">Consent</div>
+        <div class="consent-block">
+          <div class="consent-item">
+            <input type="checkbox" id="originalWork" />
+            <label for="originalWork">This is my original work</label>
+          </div>
+          <div class="consent-item">
+            <input type="checkbox" id="allowPublish" />
+            <label for="allowPublish">I allow Scintilla to publish this</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="add-btn" onclick="addToCart()">＋ Add to Submission Cart</button>
+      <div id="formError" style="color:#c00;font-family:var(--mono);font-size:12px;margin-top:10px;display:none;"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: CART -->
+  <div>
+    <div class="cart-panel">
+      <div class="cart-title">Submission Cart</div>
+      <div id="cartCount" class="cart-count">0 items</div>
+      <div id="cartItems">
+        <div class="cart-empty" id="cartEmpty">No submissions yet.<br>Fill the form and click Add.</div>
+      </div>
+      <button class="submit-all-btn" id="submitAllBtn" onclick="submitAll()" disabled>Submit All Entries</button>
+      <div class="success-msg" id="successMsg">
+        ✓ Submissions received! Thank you for contributing to Scintilla.<br>
+        We'll be in touch at your email address.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer style="background:var(--cream);border-top:1px solid var(--gray-border);padding:32px 40px 20px;font-family:var(--mono);font-size:12px;color:#888;text-align:center;">
+  <div style="margin-bottom:6px;">
+    <a href="index.html" style="color:#888;text-decoration:none;margin:0 12px;">Home</a>·
+    <a href="#" style="color:#888;text-decoration:none;margin:0 12px;">Submit</a>·
+    <a href="index.html#prev-edition" style="color:#888;text-decoration:none;margin:0 12px;">First Edition</a>
+  </div>
+  © 2026 Scintilla Magazine — scintilla@snuchennai.edu.in — @scintilla.mag
+</footer>
+
+<script>
+  // ── Tab switching ──
+  function switchTab(tab) {
+    const uploadZone = document.getElementById('uploadZone');
+    const pasteZone = document.getElementById('pasteZone');
+    const toggleUpload = document.getElementById('toggleUpload');
+    const togglePaste = document.getElementById('togglePaste');
+    if (tab === 'upload') {
+      uploadZone.classList.remove('hidden');
+      pasteZone.classList.remove('visible');
+      toggleUpload.classList.add('active');
+      togglePaste.classList.remove('active');
+    } else {
+      uploadZone.classList.add('hidden');
+      pasteZone.classList.add('visible');
+      togglePaste.classList.add('active');
+      toggleUpload.classList.remove('active');
+    }
+  }
+
+  // ── Cart state ──
+  let cart = [];
+
+  function showError(msg) {
+    const el = document.getElementById('formError');
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  function addToCart() {
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const course = document.getElementById('course').value;
+    const year = document.getElementById('year').value;
+    const category = document.getElementById('category').value;
+    const title = document.getElementById('title').value.trim();
+    const originalWork = document.getElementById('originalWork').checked;
+    const allowPublish = document.getElementById('allowPublish').checked;
+
+    if (!fullName) return showError('Please enter your full name.');
+    if (!email) return showError('Please enter your email address.');
+    if (!course) return showError('Please select your course.');
+    if (!year) return showError('Please select your year.');
+    if (!category) return showError('Please select a category.');
+    if (!title) return showError('Please enter a title for your submission.');
+    if (!originalWork) return showError('Please confirm this is your original work.');
+    if (!allowPublish) return showError('Please consent to publication.');
+    showError('');
+
+    const item = {
+      id: Date.now(),
+      title,
+      category,
+      name: fullName,
+      email,
+      course,
+      year,
+    };
+    cart.push(item);
+    renderCart();
+    // Clear submission-specific fields
+    document.getElementById('category').value = '';
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('pasteContent').value = '';
+    document.getElementById('originalWork').checked = false;
+    document.getElementById('allowPublish').checked = false;
+  }
+
+  function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    renderCart();
+  }
+
+  function renderCart() {
+    const container = document.getElementById('cartItems');
+    const countEl = document.getElementById('cartCount');
+    const emptyEl = document.getElementById('cartEmpty');
+    const submitBtn = document.getElementById('submitAllBtn');
+
+    countEl.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
+
+    if (cart.length === 0) {
+      if (!emptyEl) {
+        const empty = document.createElement('div');
+        empty.className = 'cart-empty';
+        empty.id = 'cartEmpty';
+        empty.innerHTML = 'No submissions yet.<br>Fill the form and click Add.';
+        container.appendChild(empty);
+      }
+      // remove existing items
+      Array.from(container.querySelectorAll('.cart-item')).forEach(el => el.remove());
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // Remove empty placeholder
+    const existingEmpty = document.getElementById('cartEmpty');
+    if (existingEmpty) existingEmpty.remove();
+
+    // Clear existing items
+    Array.from(container.querySelectorAll('.cart-item')).forEach(el => el.remove());
+
+    cart.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <div class="cart-item-info">
+          <div class="cart-item-title">${escapeHtml(item.title)}</div>
+          <div class="cart-item-cat">${escapeHtml(item.category)}</div>
+        </div>
+        <button class="cart-remove" onclick="removeFromCart(${item.id})">✕</button>
+      `;
+      container.appendChild(div);
+    });
+
+    submitBtn.disabled = false;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function submitAll() {
+    if (cart.length === 0) return;
+    document.getElementById('submitAllBtn').disabled = true;
+    document.getElementById('submitAllBtn').textContent = 'Submitting...';
+    setTimeout(() => {
+      cart = [];
+      renderCart();
+      const successMsg = document.getElementById('successMsg');
+      successMsg.classList.add('visible');
+      document.getElementById('submitAllBtn').textContent = 'Submit All Entries';
+      const countEl = document.getElementById('cartCount');
+      countEl.textContent = '0 items';
+    }, 1200);
+  }
+
+  // Drag and drop
+  const uploadZone = document.getElementById('uploadZone');
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'var(--blue)'; });
+  uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = 'var(--gray-border)'; });
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.style.borderColor = 'var(--gray-border)';
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('fileInput').files = e.dataTransfer.files;
+      uploadZone.querySelector('label').innerHTML = `<strong>${file.name}</strong><br><span style="font-size:11px;color:#aaa;">File selected</span>`;
+    }
+  });
+  document.getElementById('fileInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+      uploadZone.querySelector('label').innerHTML = `<strong>${file.name}</strong><br><span style="font-size:11px;color:#aaa;">File selected</span>`;
+    }
+  });
+</script>
+</body>
+</html>
