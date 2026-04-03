@@ -2,3 +2,8 @@ frames/
 index2.html
 index(1).html
 index(2).html
+.DS_Store
+**/.DS_Store
+venv/
+node_modules/
+.env

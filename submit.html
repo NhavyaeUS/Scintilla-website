@@ -408,12 +408,12 @@
             <div class="form-select-wrap">
               <select class="form-select" id="category">
                 <option value="" disabled selected>Select category</option>
-                <option>Poetry</option>
-                <option>Short Story</option>
-                <option>Article</option>
-                <option>Artwork</option>
-                <option>Photography</option>
-                <option>Other</option>
+                <option value="poetry">Poetry</option>
+                <option value="fiction">Fiction</option>
+                <option value="nonfiction">Non-Fiction</option>
+                <option value="articles">Articles</option>
+                <option value="artwork">Artwork</option>
+                <option value="photography">Photography</option>
               </select>
             </div>
           </div>
@@ -546,6 +546,22 @@
     if (!allowPublish) return showError('Please consent to publication.');
     showError('');
 
+    // Check active upload method
+    const isPaste = document.getElementById('togglePaste').classList.contains('active');
+    let submissionFile = null;
+    
+    if (isPaste) {
+      const pasteContent = document.getElementById('pasteContent').value.trim();
+      if (!pasteContent) return showError('Please paste your content.');
+      submissionFile = new File([pasteContent], "pasted_content.txt", { type: "text/plain" });
+    } else {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files || fileInput.files.length === 0) return showError('Please upload a file.');
+      submissionFile = fileInput.files[0];
+    }
+
+    const description = document.getElementById('description').value.trim();
+
     const item = {
       id: Date.now(),
       title,
@@ -554,6 +570,8 @@
       email,
       course,
       year,
+      description,
+      file: submissionFile
     };
     cart.push(item);
     renderCart();
@@ -565,6 +583,8 @@
     document.getElementById('pasteContent').value = '';
     document.getElementById('originalWork').checked = false;
     document.getElementById('allowPublish').checked = false;
+    document.getElementById('uploadZone').querySelector('label').innerHTML = `Click to upload or drag and drop<br>
+            <span style="font-size:11px;color:#aaa;margin-top:6px;display:block;">PDF, DOCX, JPG, PNG accepted</span>`;
   }
 
   function removeFromCart(id) {
@@ -621,19 +641,57 @@
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function submitAll() {
+  async function submitAll() {
     if (cart.length === 0) return;
     document.getElementById('submitAllBtn').disabled = true;
     document.getElementById('submitAllBtn').textContent = 'Submitting...';
-    setTimeout(() => {
+    
+    // Prepare FormData
+    const formData = new FormData();
+    const name = cart[0].name;
+    const email = cart[0].email;
+    const course = cart[0].course;
+    const year = cart[0].year;
+    
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('course', course);
+    formData.append('year', year);
+    
+    const submissionsList = cart.map(item => ({
+      category: item.category.toLowerCase(),
+      title: item.title,
+      description: item.description || ''
+    }));
+    formData.append('submissions', JSON.stringify(submissionsList));
+    
+    cart.forEach(item => {
+      formData.append('files', item.file, item.file.name);
+    });
+
+    try {
+      const resp = await fetch('http://localhost:3000/api/v1/submit', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.message || 'Error submitting');
+      }
+      
       cart = [];
       renderCart();
       const successMsg = document.getElementById('successMsg');
       successMsg.classList.add('visible');
       document.getElementById('submitAllBtn').textContent = 'Submit All Entries';
-      const countEl = document.getElementById('cartCount');
-      countEl.textContent = '0 items';
-    }, 1200);
+      document.getElementById('cartCount').textContent = '0 items';
+      
+    } catch (err) {
+      showError(err.message);
+      document.getElementById('submitAllBtn').disabled = false;
+      document.getElementById('submitAllBtn').textContent = 'Submit All Entries';
+    }
   }
 
   // Drag and drop
