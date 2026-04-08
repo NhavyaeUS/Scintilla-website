@@ -1,437 +1,599 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Scintilla — Igniting Minds. Illuminating Ideas.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Khand:wght@400;500;600;700&family=Hind:wght@300;400;500;600&family=Fragment+Mono:ital@0;1&family=Martian+Mono:wght@300;400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-/* ─── RESET ─── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; overflow-x: hidden; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scintilla — Igniting Minds. Illuminating Ideas.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Khand:wght@400;500;600;700&family=Hind:wght@300;400;500;600&family=Fragment+Mono:ital@0;1&family=Martian+Mono:wght@300;400;500;600&family=Oswald:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ─── RESET ─── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-:root {
-  --cream: #F5EDD8;
-  --dark:  #111111;
-  --blue:  #3D47C9;
-  --teal:  #3A7D8C;
-  --white: #FFFFFF;
-  --gray:  #D9D9D9;
-  --mono:    'Fragment Mono', monospace;
-  --heading: 'Khand', sans-serif;
-  --sub:     'Hind', sans-serif;
-  --team:    'Martian Mono', monospace;
-  --section: 'Oswald', sans-serif;
-  /* responsive padding — sections bleed to edges, content indented */
-  --px: clamp(24px, 5vw, 96px);
-  --py: clamp(48px, 7vw, 96px);
-}
+    html,
+    body {
+      width: 100%;
+      overflow-x: hidden;
+    }
 
-html { scroll-behavior: smooth; }
-body {
-  background: var(--cream);
-  color: var(--dark);
-  font-family: var(--mono);
-  /* NO max-width here — sections are full-width, content uses --px */
-}
+    :root {
+      --cream: #F5EDD8;
+      --dark: #111111;
+      --blue: #3D47C9;
+      --teal: #3A7D8C;
+      --white: #FFFFFF;
+      --gray: #D9D9D9;
+      --mono: 'Fragment Mono', monospace;
+      --heading: 'Khand', sans-serif;
+      --sub: 'Hind', sans-serif;
+      --team: 'Martian Mono', monospace;
+      --section: 'Oswald', sans-serif;
+      /* responsive padding — sections bleed to edges, content indented */
+      --px: clamp(24px, 5vw, 96px);
+      --py: clamp(48px, 7vw, 96px);
+    }
 
-/* ════════════════════════════════
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--dark);
+      font-family: var(--mono);
+      /* NO max-width here — sections are full-width, content uses --px */
+    }
+
+    /* ════════════════════════════════
    NAV
 ════════════════════════════════ */
-nav {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 20;
-  padding: 22px var(--px);
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.22);
-}
-nav::after {
-  content: '';
-  position: absolute;
-  left: var(--px); right: var(--px);
-  bottom: 7px; height: 1px;
-  background: rgba(255,255,255,0.15);
-}
-.nav-logo {
-  font-family: var(--heading);
-  font-size: clamp(16px, 1.8vw, 22px);
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 3px;
-}
-.nav-links {
-  display: flex;
-  gap: clamp(20px, 3vw, 52px);
-  margin-left: auto;
-  list-style: none;
-}
-.nav-links a {
-  color: rgba(255,255,255,0.82);
-  text-decoration: none;
-  font-family: var(--mono);
-  font-size: clamp(11px, 1vw, 13px);
-  letter-spacing: 0.6px;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: #fff; }
+    nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      padding: 22px var(--px);
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+    }
 
-/* ════════════════════════════════
+    nav::after {
+      content: '';
+      position: absolute;
+      left: var(--px);
+      right: var(--px);
+      bottom: 7px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-logo {
+      font-family: var(--heading);
+      font-size: clamp(16px, 1.8vw, 22px);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: clamp(20px, 3vw, 52px);
+      margin-left: auto;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.82);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: clamp(11px, 1vw, 13px);
+      letter-spacing: 0.6px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* ════════════════════════════════
    1. HERO  — full viewport, content centred vertically
 ════════════════════════════════ */
-#hero {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  min-height: 620px;
-  background: #0a1628;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;   /* vertical centre of whole viewport */
-  text-align: center;
-  overflow: hidden;
-}
-.hero-bg-img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  z-index: 0; opacity: 0.85;
-}
-/* Magazine / astronaut cover: anchored to bottom, sits behind text */
-.hero-cover-img {
-  position: absolute;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  height: 62%;
-  z-index: 1;
-  pointer-events: none;
-  object-fit: contain;
-}
-.hero-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* nudge slightly above visual centre to clear the cover image */
-  margin-top: -8vh;
-}
-.hero-title {
-  font-family: var(--heading);
-  font-size: clamp(68px, 11vw, 148px);
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1;
-  letter-spacing: -1px;
-}
-.hero-tagline {
-  font-family: var(--mono);
-  font-size: clamp(12px, 1.3vw, 16px);
-  color: rgba(255,255,255,0.85);
-  margin-top: 14px;
-  letter-spacing: 1.5px;
-  font-style: italic;
-}
-.hero-meta {
-  margin-top: clamp(20px, 2.5vh, 36px);
-  font-family: var(--mono);
-  font-size: clamp(11px, 1vw, 13px);
-  color: rgba(255,255,255,0.6);
-  line-height: 2;
-}
-.hero-buttons {
-  display: flex;
-  gap: clamp(16px, 2.5vw, 36px);
-  justify-content: center;
-  margin-top: clamp(22px, 3vh, 42px);
-}
-.hero-btn {
-  font-family: var(--mono);
-  font-size: clamp(11px, 1vw, 13px);
-  color: var(--white);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.5);
-  padding: clamp(8px, 1.1vh, 12px) clamp(16px, 2vw, 26px);
-  text-decoration: none;
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  transition: background 0.25s, border-color 0.25s;
-}
-.hero-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.85); }
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 620px;
+      background: #0a1628;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      /* vertical centre of whole viewport */
+      text-align: center;
+      overflow: hidden;
+    }
 
-/* ════════════════════════════════
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.85;
+    }
+
+    /* Magazine / astronaut cover: anchored to bottom, sits behind text */
+    .hero-cover-img {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 62%;
+      z-index: 1;
+      pointer-events: none;
+      object-fit: contain;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* nudge slightly above visual centre to clear the cover image */
+      margin-top: -8vh;
+    }
+
+    .hero-title {
+      font-family: var(--heading);
+      font-size: clamp(68px, 11vw, 148px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .hero-tagline {
+      font-family: var(--mono);
+      font-size: clamp(12px, 1.3vw, 16px);
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 14px;
+      letter-spacing: 1.5px;
+      font-style: italic;
+    }
+
+    .hero-meta {
+      margin-top: clamp(20px, 2.5vh, 36px);
+      font-family: var(--mono);
+      font-size: clamp(11px, 1vw, 13px);
+      color: rgb(255, 255, 255);
+      line-height: 2;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: clamp(16px, 2.5vw, 36px);
+      justify-content: center;
+      margin-top: clamp(22px, 3vh, 42px);
+    }
+
+    .hero-btn {
+      font-family: var(--mono);
+      font-size: clamp(11px, 1vw, 13px);
+      color: var(--white);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: clamp(8px, 1.1vh, 12px) clamp(16px, 2vw, 26px);
+      text-decoration: none;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .hero-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* ════════════════════════════════
    2. THE SPARK
 ════════════════════════════════ */
-#spark {
-  background: var(--cream);
-  padding: var(--py) var(--px);
-  width: 100%;
-}
-.spark-title {
-  font-family: var(--section);
-  font-size: clamp(28px, 4vw, 52px);
-  font-weight: 700; line-height: 1.1;
-}
-.spark-eyebrow {
-  font-family: var(--section);
-  font-size: clamp(11px, 1vw, 13px);
-  color: #888; margin-top: 5px;
-  font-weight: 400; letter-spacing: 1px;
-}
-.spark-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(28px, 5vw, 80px);
-  margin-top: clamp(24px, 3vw, 48px);
-  align-items: center;
-}
-.spark-image-placeholder {
-  background: var(--gray);
-  aspect-ratio: 4/3;
-  width: 100%; overflow: hidden;
-}
-.spark-image-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.spark-body {
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.15vw, 15px);
-  line-height: 1.95;
-  text-align: justify;
-}
+    #spark {
+      background: var(--cream);
+      padding: var(--py) var(--px);
+      width: 100%;
+    }
 
-/* ════════════════════════════════
+    .spark-title {
+      font-family: var(--section);
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .spark-eyebrow {
+      font-family: var(--section);
+      font-size: clamp(11px, 1vw, 13px);
+      color: #888;
+      margin-top: 5px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    .spark-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(28px, 5vw, 80px);
+      margin-top: clamp(24px, 3vw, 48px);
+      align-items: center;
+    }
+
+    .spark-image-placeholder {
+      background: var(--gray);
+      aspect-ratio: 4/3;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .spark-image-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .spark-body {
+      font-family: var(--mono);
+      font-size: clamp(13px, 1.15vw, 15px);
+      line-height: 1.95;
+      text-align: justify;
+    }
+
+    /* ════════════════════════════════
    3. WHAT WE PUBLISH
 ════════════════════════════════ */
-#publish {
-  background: var(--cream);
-  padding: var(--py) var(--px);
-  width: 100%;
-}
-.publish-header { text-align: right; margin-bottom: clamp(18px, 2.5vw, 36px); }
-.publish-title {
-  font-family: var(--section);
-  font-size: clamp(24px, 3.6vw, 46px);
-  font-weight: 700;
-}
-.publish-sub {
-  font-family: var(--sub);
-  font-size: clamp(12px, 1vw, 14px);
-  color: #666; margin-top: 4px;
-}
-.publish-grid-wrap {
-  background: var(--gray);
-  padding: clamp(10px, 1vw, 16px);
-}
-.publish-grid-v2 {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr 1.6fr 1.3fr;
-  grid-template-rows: minmax(150px, 20vw) minmax(120px, 16vw) minmax(70px, 9vw);
-  gap: clamp(8px, 0.9vw, 13px);
-}
-.pub-cell {
-  background: var(--white);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: default;
-}
-.pub-cell:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 40px rgba(0,0,0,0.13);
-  z-index: 3;
-}
-.pub-cell::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: #e4e4e4;
-  z-index: 0;
-}
-/* PLACEHOLDER IMAGE — set display:block and add src when ready */
-.pub-cell-img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: none; /* ← change to block when you have images */
-  z-index: 1;
-}
-.pub-cell-label {
-  position: relative; z-index: 2;
-  width: 100%;
-  background: rgba(255,255,255,0.93);
-  padding: clamp(9px, 1.1vw, 15px) clamp(12px, 1.4vw, 18px);
-  font-family: var(--section);
-  font-size: clamp(12px, 1.1vw, 15px);
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-align: center;
-  line-height: 1.4;
-}
-.pv2-multilingual { grid-column: 1; grid-row: 1 / 4; }
-.pv2-poetry       { grid-column: 2; grid-row: 1; }
-.pv2-prose        { grid-column: 3; grid-row: 1; }
-.pv2-interviews   { grid-column: 4; grid-row: 1 / 3; }
-.pv2-articles     { grid-column: 2; grid-row: 2 / 4; }
-.pv2-artworks     { grid-column: 3; grid-row: 2; }
-.pv2-capturesque  { grid-column: 3 / 5; grid-row: 3; }
+    #publish {
+      background: var(--cream);
+      padding: var(--py) var(--px);
+      width: 100%;
+    }
 
-/* ════════════════════════════════
+    .publish-header {
+      text-align: right;
+      margin-bottom: clamp(18px, 2.5vw, 36px);
+    }
+
+    .publish-title {
+      font-family: var(--section);
+      font-size: clamp(24px, 3.6vw, 46px);
+      font-weight: 700;
+    }
+
+    .publish-sub {
+      font-family: var(--sub);
+      font-size: clamp(12px, 1vw, 14px);
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .publish-grid-wrap {
+      background: var(--gray);
+      padding: clamp(10px, 1vw, 16px);
+    }
+
+    .publish-grid-v2 {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr 1.6fr 1.3fr;
+      grid-template-rows: minmax(150px, 20vw) minmax(120px, 16vw) minmax(70px, 9vw);
+      gap: clamp(8px, 0.9vw, 13px);
+    }
+
+    .pub-cell {
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+
+    .pub-cell:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.13);
+      z-index: 3;
+    }
+
+    .pub-cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #e4e4e4;
+      z-index: 0;
+    }
+
+    /* PLACEHOLDER IMAGE — set display:block and add src when ready */
+    .pub-cell-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      /* ← change to block when you have images */
+      z-index: 1;
+    }
+
+    .pub-cell-label {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.93);
+      padding: clamp(9px, 1.1vw, 15px) clamp(12px, 1.4vw, 18px);
+      font-family: var(--section);
+      font-size: clamp(12px, 1.1vw, 15px);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .pv2-multilingual {
+      grid-column: 1;
+      grid-row: 1 / 4;
+    }
+
+    .pv2-poetry {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .pv2-prose {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    .pv2-interviews {
+      grid-column: 4;
+      grid-row: 1 / 3;
+    }
+
+    .pv2-articles {
+      grid-column: 2;
+      grid-row: 2 / 4;
+    }
+
+    .pv2-artworks {
+      grid-column: 3;
+      grid-row: 2;
+    }
+
+    .pv2-capturesque {
+      grid-column: 3 / 5;
+      grid-row: 3;
+    }
+
+    /* ════════════════════════════════
    4. OUR TEAM
    Matches screenshot: planet bleeds into left/right edge,
    label + names use natural flow with indent
 ════════════════════════════════ */
-#team {
-  background: var(--cream);
-  padding: var(--py) var(--px);
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-.team-title {
-  font-family: var(--section);
-  font-size: clamp(22px, 2.8vw, 38px);
-  font-weight: 700;
-  margin-bottom: clamp(32px, 4vw, 60px);
-}
+    #team {
+      background: var(--cream);
+      padding: var(--py) var(--px);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* ── EDITORIAL block (planet left, label+names to right) ── */
-.team-block-editorial {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(18px, 2.5vw, 40px);
-  margin-bottom: clamp(48px, 6vw, 80px);
-  position: relative;
-}
-/* Saturn peeks in from the left edge */
-.team-saturn {
-  flex-shrink: 0;
-  width: clamp(100px, 11vw, 170px);
-  margin-left: calc(-1 * var(--px) + clamp(0px, 1vw, 16px));
-  margin-top: 0;
-  object-fit: contain;
-  align-self: flex-start;
-  pointer-events: none;
-}
-.team-inner-editorial {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(16px, 2.5vw, 40px);
-  flex: 1;
-}
+    .team-title {
+      font-family: var(--section);
+      font-size: clamp(22px, 2.8vw, 38px);
+      font-weight: 700;
+      margin-bottom: clamp(32px, 4vw, 60px);
+    }
 
-/* ── DESIGN block (names+label on right, planet bleeds right edge) ── */
-.team-block-design {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: clamp(18px, 2.5vw, 40px);
-  margin-bottom: clamp(48px, 6vw, 80px);
-  position: relative;
-}
-.team-inner-design {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(16px, 2.5vw, 40px);
-  flex-direction: row-reverse; /* label right, names left */
-}
-/* Earth/globe peeks in from the right edge */
-.team-planet-right {
-  flex-shrink: 0;
-  width: clamp(90px, 10vw, 158px);
-  margin-right: calc(-1 * var(--px) + clamp(0px, 1vw, 16px));
-  margin-top: 0;
-  object-fit: contain;
-  align-self: flex-start;
-  pointer-events: none;
-}
+    /* ── EDITORIAL block (planet left, label+names to right) ── */
+    .team-block-editorial {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(18px, 2.5vw, 40px);
+      margin-bottom: clamp(48px, 6vw, 80px);
+      position: relative;
+    }
 
-/* ── LEAD block (same as editorial, no planet) ── */
-.team-block-lead {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(18px, 2.5vw, 40px);
-  margin-bottom: clamp(48px, 6vw, 80px);
-}
+    /* Saturn: absolutely positioned, flush to the left viewport edge */
+    .team-saturn {
+      position: absolute;
+      left: calc(-1 * var(--px));
+      top: 0;
+      width: clamp(100px, 11vw, 170px);
+      object-fit: contain;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-/* Shared label + names */
-.team-label-big {
-  font-family: var(--section);
-  font-size: clamp(44px, 6.5vw, 84px);
-  font-weight: 700;
-  color: var(--teal);
-  line-height: 0.88;
-  flex-shrink: 0;
-}
-.team-names {
-  font-family: var(--team);
-  font-size: clamp(11px, 1vw, 13px);
-  line-height: 2.05;
-  padding-top: 4px;
-}
-.team-names-right { text-align: right; }
+    /* Indent editorial inner so it clears the saturn image */
+    .team-inner-editorial {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(16px, 2.5vw, 40px);
+      flex: 1;
+      margin-left: clamp(110px, 12vw, 186px);
+    }
 
-/* ════════════════════════════════
+    /* ── DESIGN block (names+label on right, planet bleeds right edge) ── */
+    .team-block-design {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: clamp(18px, 2.5vw, 40px);
+      margin-bottom: clamp(48px, 6vw, 80px);
+      position: relative;
+    }
+
+    .team-inner-design {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(16px, 2.5vw, 40px);
+      flex-direction: row-reverse;
+      /* label right, names left */
+      margin-right: clamp(100px, 11vw, 174px);
+    }
+
+    /* Earth/globe: absolutely positioned, flush to the right viewport edge */
+    .team-planet-right {
+      position: absolute;
+      right: calc(-1 * var(--px));
+      top: 0;
+      width: clamp(90px, 10vw, 158px);
+      object-fit: contain;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LEAD block (same as editorial, no planet) ── */
+    .team-block-lead {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(18px, 2.5vw, 40px);
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+
+    /* Shared label + names */
+    .team-label-big {
+      font-family: var(--section);
+      font-size: clamp(44px, 6.5vw, 84px);
+      font-weight: 700;
+      color: var(--teal);
+      line-height: 0.88;
+      flex-shrink: 0;
+    }
+
+    .team-names {
+      font-family: var(--team);
+      font-size: clamp(11px, 1vw, 13px);
+      line-height: 2.05;
+      padding-top: 4px;
+    }
+
+    .team-names-right {
+      text-align: right;
+    }
+
+    /* ════════════════════════════════
    5. PREVIOUS EDITION
 ════════════════════════════════ */
-#prev-edition {
-  background: var(--cream);
-  padding: var(--py) var(--px);
-  width: 100%;
-}
-.prev-header { text-align: right; margin-bottom: clamp(24px, 3vw, 48px); }
-.prev-title {
-  font-family: var(--section);
-  font-size: clamp(24px, 3.6vw, 46px);
-  font-weight: 700;
-}
-.prev-inner {
-  display: grid;
-  grid-template-columns: 1fr clamp(200px, 20vw, 290px);
-  gap: clamp(32px, 5vw, 80px);
-  align-items: start;
-}
-.prev-body {
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.1vw, 15px);
-  line-height: 1.95;
-  text-align: justify;
-}
-.prev-download {
-  display: inline-block;
-  margin-top: 26px;
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.1vw, 15px);
-  color: var(--dark);
-  text-decoration: underline;
-  font-style: italic;
-  cursor: pointer;
-}
-.prev-cover {
-  width: 100%;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-  background: #0d1b3e;
-  aspect-ratio: 3/4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.prev-cover-actual-img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 10px; }
-.prev-cover-fallback { text-align: center; padding: 20px; color: var(--white); }
-.prev-cover-uni  { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; opacity: 0.8; line-height: 1.6; }
-.prev-cover-name { font-family: var(--heading); font-size: 40px; font-weight: 700; margin-top: 6px; }
-.prev-cover-tag  { font-family: var(--mono); font-size: 8px; letter-spacing: 1.5px; opacity: 0.7; margin-top: 6px; line-height: 1.6; }
+    #prev-edition {
+      background: var(--cream);
+      padding: var(--py) var(--px);
+      width: 100%;
+    }
 
-/* ════════════════════════════════
+    .prev-header {
+      text-align: right;
+      margin-bottom: clamp(24px, 3vw, 48px);
+    }
+
+    .prev-title {
+      font-family: var(--section);
+      font-size: clamp(24px, 3.6vw, 46px);
+      font-weight: 700;
+    }
+
+    .prev-inner {
+      display: grid;
+      grid-template-columns: 1fr clamp(200px, 20vw, 290px);
+      gap: clamp(32px, 5vw, 80px);
+      align-items: start;
+    }
+
+    .prev-body {
+      font-family: var(--mono);
+      font-size: clamp(13px, 1.1vw, 15px);
+      line-height: 1.95;
+      text-align: justify;
+    }
+
+    .prev-download {
+      display: inline-block;
+      margin-top: 26px;
+      font-family: var(--mono);
+      font-size: clamp(13px, 1.1vw, 15px);
+      color: var(--dark);
+      text-decoration: underline;
+      font-style: italic;
+      cursor: pointer;
+    }
+
+    .prev-cover {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+      background: #0d1b3e;
+      aspect-ratio: 3/4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prev-cover-actual-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .prev-cover-fallback {
+      text-align: center;
+      padding: 20px;
+      color: var(--white);
+    }
+
+    .prev-cover-uni {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .prev-cover-name {
+      font-family: var(--heading);
+      font-size: 40px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .prev-cover-tag {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      opacity: 0.7;
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    /* ════════════════════════════════
    6. SUBMIT CTA
    Exact match to screenshot:
    • Full-bleed blue section (no side padding leak)
@@ -441,376 +603,534 @@ nav::after {
    • "SUBMIT YOUR WORK NOW" centred under lamp
    • Moon icons truly scattered
 ════════════════════════════════ */
-#submit-cta {
-  background: var(--blue);
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  /* Cream bars top and bottom matching screenshot */
-  border-top: clamp(16px, 2.2vw, 32px) solid var(--cream);
-  border-bottom: clamp(16px, 2.2vw, 32px) solid var(--cream);
-  /* min-height so it feels like the reference proportions */
-  min-height: clamp(300px, 42vw, 560px);
-  display: flex;
-  align-items: center;
-}
-/* inner layout — text left, lamp right */
-.cta-inner {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr clamp(260px, 34vw, 480px);
-  align-items: center;
-  padding: clamp(40px, 5vw, 72px) var(--px);
-  position: relative;
-  z-index: 2;
-}
-.cta-text-block {}
-.cta-body {
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.25vw, 17px);
-  color: var(--white);
-  line-height: 2;
-}
+    #submit-cta {
+      background: var(--blue);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      /* Cream bars top and bottom matching screenshot */
+      border-top: clamp(16px, 2.2vw, 32px) solid var(--cream);
+      border-bottom: clamp(16px, 2.2vw, 32px) solid var(--cream);
+      /* min-height so it feels like the reference proportions */
+      min-height: clamp(300px, 42vw, 560px);
+      display: flex;
+      align-items: center;
+    }
 
-/* Lamp column: lamp fills column height, link below */
-.cta-image-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  /* stretch to use full section height */
-  align-self: stretch;
-  position: relative;
-}
-.cta-lamp-img {
-  /* Tall lamp — takes ~80% of section height */
-  height: clamp(240px, 38vw, 520px);
-  width: auto;
-  object-fit: contain;
-  display: block;
-  /* Lamp sits at bottom, pole reaches down */
-  margin-top: auto;
-}
-.cta-submit-link {
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.3vw, 17px);
-  font-weight: 700;
-  color: var(--white);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-align: center;
-  cursor: pointer;
-  letter-spacing: 2px;
-  line-height: 1.55;
-  margin-top: 14px;
-  margin-bottom: clamp(14px, 2vw, 28px);
-  display: block;
-}
+    /* inner layout — text left, lamp right */
+    .cta-inner {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr clamp(260px, 34vw, 480px);
+      align-items: center;
+      padding: clamp(40px, 5vw, 72px) var(--px);
+      position: relative;
+      z-index: 2;
+    }
 
-/* Moon / crescent decorations — truly scattered */
-.cta-moon {
-  position: absolute;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.82;
-  object-fit: contain;
-}
+    .cta-text-block {
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
 
-/* ════════════════════════════════
+    .cta-body {
+      font-family: var(--mono);
+      font-size: clamp(13px, 1.25vw, 17px);
+      color: var(--white);
+      line-height: 2;
+    }
+
+    /* Lamp column: lamp fills column height, link below */
+    .cta-image-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      /* stretch to use full section height */
+      align-self: stretch;
+      position: relative;
+    }
+
+    .cta-lamp-img {
+      /* Larger lamp — takes ~90% of section height */
+      height: clamp(300px, 48vw, 640px);
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin-top: auto;
+      /* Shift lamp left so the glow area is closer to the text */
+      margin-right: clamp(40px, 6vw, 100px);
+    }
+
+    .cta-image-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      align-self: stretch;
+      position: relative;
+      /* Shift the whole column left */
+      margin-left: clamp(-60px, -4vw, -20px);
+    }
+
+    .cta-submit-link {
+      font-family: var(--mono);
+      font-size: clamp(15px, 1.6vw, 21px);
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-align: center;
+      cursor: pointer;
+      letter-spacing: 2px;
+      line-height: 1.55;
+      /* Pull text up closer towards lamp light area */
+      margin-top: 4px;
+      margin-bottom: clamp(20px, 3vw, 36px);
+      display: block;
+    }
+
+    /* Moon / crescent decorations — truly scattered */
+    .cta-moon {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.82;
+      object-fit: contain;
+    }
+
+    /* ════════════════════════════════
    7. FOOTER
 ════════════════════════════════ */
-footer {
-  background: var(--cream);
-  border-top: 1px solid rgba(0,0,0,0.09);
-  padding: clamp(36px, 5vw, 64px) var(--px) clamp(20px, 3vw, 36px);
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-  font-family: var(--mono);
-  font-size: clamp(12px, 1vw, 14px);
-  line-height: 2;
-  width: 100%;
-}
-.footer-brand-name { font-weight: 600; font-size: clamp(13px, 1.1vw, 16px); }
-.footer-links-head { color: #888; margin-bottom: 4px; }
-footer a { color: var(--dark); text-decoration: none; }
-footer a:hover { text-decoration: underline; }
-.footer-contact { text-align: right; }
-.footer-bottom {
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(0,0,0,0.07);
-  font-size: clamp(11px, 0.9vw, 13px);
-  color: #777;
-  line-height: 1.8;
-}
+    footer {
+      background: var(--cream);
+      border-top: 1px solid rgba(0, 0, 0, 0.09);
+      padding: clamp(36px, 5vw, 64px) var(--px) clamp(20px, 3vw, 36px);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      font-family: var(--mono);
+      font-size: clamp(12px, 1vw, 14px);
+      line-height: 2;
+      width: 100%;
+    }
 
-/* ════════════════════════════════
+    .footer-brand-name {
+      font-weight: 600;
+      font-size: clamp(13px, 1.1vw, 16px);
+    }
+
+    .footer-links-head {
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    footer a {
+      color: var(--dark);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-contact {
+      text-align: right;
+    }
+
+    .footer-bottom {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 0, 0, 0.07);
+      font-size: clamp(11px, 0.9vw, 13px);
+      color: #777;
+      line-height: 1.8;
+    }
+
+    /* ════════════════════════════════
    RESPONSIVE — TABLET ≤ 960px
 ════════════════════════════════ */
-@media (max-width: 960px) {
-  .publish-grid-v2 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-  }
-  .pv2-multilingual, .pv2-poetry, .pv2-prose,
-  .pv2-interviews, .pv2-articles, .pv2-artworks, .pv2-capturesque {
-    grid-column: auto; grid-row: auto; min-height: 180px;
-  }
+    @media (max-width: 960px) {
+      .publish-grid-v2 {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
 
-  /* Team: single column, no planets */
-  .team-block-editorial, .team-block-design, .team-block-lead {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .team-inner-editorial, .team-inner-design { flex-direction: column; }
-  .team-inner-design { align-items: flex-start; }
-  .team-names-right { text-align: left; }
-  .team-label-big { font-size: clamp(40px, 8vw, 72px); }
-  .team-saturn, .team-planet-right { display: none; }
+      .pv2-multilingual,
+      .pv2-poetry,
+      .pv2-prose,
+      .pv2-interviews,
+      .pv2-articles,
+      .pv2-artworks,
+      .pv2-capturesque {
+        grid-column: auto;
+        grid-row: auto;
+        min-height: 180px;
+      }
 
-  /* CTA stacks */
-  .cta-inner { grid-template-columns: 1fr; text-align: center; }
-  .cta-image-block { margin: 0 auto; }
-  .cta-lamp-img { height: clamp(180px, 45vw, 360px); }
+      /* Team: single column, planets visible but smaller */
+      .team-block-editorial,
+      .team-block-design,
+      .team-block-lead {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-  footer { grid-template-columns: 1fr 1fr; }
-  .footer-contact { text-align: left; }
-}
+      .team-inner-editorial {
+        flex-direction: column;
+        margin-left: clamp(90px, 11vw, 150px);
+      }
 
-/* ════════════════════════════════
+      /* On tablet, DESIGN: heading above names, left aligned */
+      .team-inner-design {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 0;
+        margin-left: 0;
+      }
+
+      .team-names-right {
+        text-align: left;
+      }
+
+      .team-label-big {
+        font-size: clamp(40px, 8vw, 72px);
+      }
+
+      /* Keep stickers but smaller and clipped naturally by overflow:hidden */
+      .team-saturn {
+        width: clamp(70px, 9vw, 120px);
+      }
+
+      .team-planet-right {
+        width: clamp(65px, 8vw, 110px);
+      }
+
+      /* CTA stacks */
+      .cta-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .cta-image-block {
+        margin: 0 auto;
+      }
+
+      .cta-lamp-img {
+        height: clamp(180px, 45vw, 360px);
+      }
+
+      footer {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-contact {
+        text-align: left;
+      }
+    }
+
+    /* ════════════════════════════════
    RESPONSIVE — MOBILE ≤ 600px
 ════════════════════════════════ */
-@media (max-width: 600px) {
-  .nav-links { gap: 14px; }
-  .nav-links a { font-size: 11px; }
-  .hero-cover-img { height: 42%; }
-  .hero-content { margin-top: -4vh; }
-  .spark-inner { grid-template-columns: 1fr; }
-  .publish-grid-v2 { grid-template-columns: 1fr; }
-  .pv2-multilingual, .pv2-interviews, .pv2-articles, .pv2-capturesque {
-    grid-column: 1; grid-row: auto; min-height: 150px;
-  }
-  .prev-inner { grid-template-columns: 1fr; }
-  .prev-cover { max-width: 220px; margin: 0 auto; }
-  footer { grid-template-columns: 1fr; }
-  .footer-contact { text-align: left; }
-  .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
-}
-</style>
+    @media (max-width: 600px) {
+      .nav-links {
+        gap: 14px;
+      }
+
+      .nav-links a {
+        font-size: 11px;
+      }
+
+      .hero-cover-img {
+        height: 42%;
+      }
+
+      .hero-content {
+        margin-top: -4vh;
+      }
+
+      .spark-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .publish-grid-v2 {
+        grid-template-columns: 1fr;
+      }
+
+      .pv2-multilingual,
+      .pv2-interviews,
+      .pv2-articles,
+      .pv2-capturesque {
+        grid-column: 1;
+        grid-row: auto;
+        min-height: 150px;
+      }
+
+      .prev-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .prev-cover {
+        max-width: 220px;
+        margin: 0 auto;
+      }
+
+      footer {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-contact {
+        text-align: left;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Mobile team: hide stickers to avoid overlap with tiny screens */
+      .team-saturn,
+      .team-planet-right {
+        display: none;
+      }
+
+      .team-inner-editorial {
+        margin-left: 0;
+      }
+
+      /* Mobile DESIGN: heading (label) renders ABOVE names */
+      .team-inner-design {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 0;
+      }
+
+      .team-names-right {
+        text-align: left;
+      }
+
+      /* Mobile CTA: reset lamp shift */
+      .cta-image-block {
+        margin-left: 0;
+      }
+
+      .cta-lamp-img {
+        margin-right: 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ══════════════════════════════════════
+  <!-- ══════════════════════════════════════
      1. HERO
 ══════════════════════════════════════ -->
-<section id="hero">
-  <img src="scintilla asset/space2_1.png" alt="" class="hero-bg-img" onerror="this.style.display='none'" />
+  <section id="hero">
+    <img src="assets/space2_1.png" alt="" class="hero-bg-img" onerror="console.error('Image failed:', this.src)" />
 
-  <nav>
-    <span class="nav-logo">SCINTILLA</span>
-    <ul class="nav-links">
-      <li><a href="#spark">About</a></li>
-      <li><a href="#publish">Publish</a></li>
-      <li><a href="#">Submit</a></li>
-      <li><a href="#prev-edition">First Edition</a></li>
-    </ul>
-  </nav>
+    <nav>
+      <span class="nav-logo">SCINTILLA</span>
+      <ul class="nav-links">
+        <li><a href="#spark">About</a></li>
+        <li><a href="#publish">Publish</a></li>
+        <li><a href="scintilla_login.html">Submit</a></li>
+        <li><a href="#prev-edition">First Edition</a></li>
+      </ul>
+    </nav>
 
 
 
-  <div class="hero-content">
-    <div class="hero-title">Scintilla</div>
-    <div class="hero-tagline">Igniting Minds. Illuminating Ideas.</div>
-    <div class="hero-meta">
-      Student-Run Campus Magazine<br>
-      Shiv Nadar University Chennai<br>
-      Est. 2024-2025
+    <div class="hero-content">
+      <div class="hero-title">Scintilla</div>
+      <div class="hero-tagline">Igniting Minds. Illuminating Ideas.</div>
+      <div class="hero-meta">
+        Student-Run Campus Magazine<br>
+        Shiv Nadar University Chennai<br>
+        Est. 2024-2025
+      </div>
+      <div class="hero-buttons">
+        <a href="#prev-edition" class="hero-btn">View first edition</a>
+        <a href="scintilla_login.html" class="hero-btn">Submissions Open</a>
+      </div>
     </div>
-    <div class="hero-buttons">
-      <a href="#prev-edition" class="hero-btn">View first edition</a>
-      <a href="#" class="hero-btn">Submissions Open</a>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ══════════════════════════════════════
+  <!-- ══════════════════════════════════════
      2. THE SPARK
 ══════════════════════════════════════ -->
-<section id="spark">
-  <div class="spark-title">The Spark</div>
-  <div class="spark-eyebrow">Why Scintilla?</div>
-  <div class="spark-inner">
-    <div class="spark-image-placeholder">
-      <!-- <img src="spark-image.jpg" alt="The Spark" /> -->
+  <section id="spark">
+    <div class="spark-title">The Spark</div>
+    <div class="spark-eyebrow">Why Scintilla?</div>
+    <div class="spark-inner">
+      <div class="spark-image-placeholder">
+        <img src="assets/group_photo.jpg" alt="The Spark" onerror="console.error('Image failed:', this.src)" />
+      </div>
+      <div class="spark-body">
+        Scintilla means "spark," but to us, it is far more than just a word. It is the ember of inspiration that catches
+        fire in curious minds, the quiet confidence that transforms hesitation into expression, and the space where
+        ideas grow, stories unfold, and creativity finds a home. Born from student initiative, Scintilla is a platform
+        built by students, for students — bringing together voices from across Shiv Nadar University Chennai.
+      </div>
     </div>
-    <div class="spark-body">
-      Scintilla means "spark," but to us, it is far more than just a word. It is the ember of inspiration that catches fire in curious minds, the quiet confidence that transforms hesitation into expression, and the space where ideas grow, stories unfold, and creativity finds a home. Born from student initiative, Scintilla is a platform built by students, for students — bringing together voices from across Shiv Nadar University Chennai.
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ══════════════════════════════════════
+  <!-- ══════════════════════════════════════
      3. WHAT WE PUBLISH
 ══════════════════════════════════════ -->
-<section id="publish">
-  <div class="publish-header">
-    <div class="publish-title">What We Publish ?</div>
-    <div class="publish-sub">What You'll Find in Scintilla</div>
-  </div>
-  <div class="publish-grid-wrap">
-    <div class="publish-grid-v2">
-
-      <div class="pub-cell pv2-multilingual">
-        <img src="" alt="Multilingual" class="pub-cell-img" /><!-- add src + remove display:none in CSS when ready -->
-        <div class="pub-cell-label">MULTILINGUAL<br>EXPRESSIONS<br>(TAMIL, HINDI, ENGLISH)</div>
-      </div>
-
-      <div class="pub-cell pv2-poetry">
-        <img src="" alt="Poetry" class="pub-cell-img" />
-        <div class="pub-cell-label">POETRY</div>
-      </div>
-
-      <div class="pub-cell pv2-prose">
-        <img src="" alt="Prose" class="pub-cell-img" />
-        <div class="pub-cell-label">PROSE</div>
-      </div>
-
-      <div class="pub-cell pv2-interviews">
-        <img src="" alt="Interviews" class="pub-cell-img" />
-        <div class="pub-cell-label">INTERVIEWS</div>
-      </div>
-
-      <div class="pub-cell pv2-articles">
-        <img src="" alt="Articles" class="pub-cell-img" />
-        <div class="pub-cell-label">ARTICLES</div>
-      </div>
-
-      <div class="pub-cell pv2-artworks">
-        <img src="" alt="Artworks" class="pub-cell-img" />
-        <div class="pub-cell-label">ARTWORKS</div>
-      </div>
-
-      <div class="pub-cell pv2-capturesque">
-        <img src="" alt="Capturesque" class="pub-cell-img" />
-        <div class="pub-cell-label">CAPTURESQUE — BEST IMAGES</div>
-      </div>
-
+  <section id="publish">
+    <div class="publish-header">
+      <div class="publish-title">What We Publish ?</div>
+      <div class="publish-sub">What You'll Find in Scintilla</div>
     </div>
-  </div>
-</section>
+    <div class="publish-grid-wrap">
+      <div class="publish-grid-v2">
 
-<!-- ══════════════════════════════════════
+        <div class="pub-cell pv2-multilingual">
+          <img src="publish/multilingual.jpg" alt="Multilingual" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">MULTILINGUAL<br>EXPRESSIONS<br>(TAMIL, HINDI, ENGLISH)</div>
+        </div>
+
+        <div class="pub-cell pv2-poetry">
+          <img src="publish/poetry.jpg" alt="Poetry" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">POETRY</div>
+        </div>
+
+        <div class="pub-cell pv2-prose">
+          <img src="publish/prose.jpg" alt="Prose" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">PROSE</div>
+        </div>
+
+        <div class="pub-cell pv2-interviews">
+          <img src="publish/interviews.jpg" alt="Interviews" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">INTERVIEWS</div>
+        </div>
+
+        <div class="pub-cell pv2-articles">
+          <img src="publish/articles.jpg" alt="Articles" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">ARTICLES</div>
+        </div>
+
+        <div class="pub-cell pv2-artworks">
+          <img src="publish/artwork.jpg" alt="Artworks" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">ARTWORKS</div>
+        </div>
+
+        <div class="pub-cell pv2-capturesque">
+          <img src="publish/bestimages.jpg" alt="Capturesque" class="pub-cell-img" onerror="console.error('Image failed:', this.src)" />
+          <div class="pub-cell-label">CAPTURESQUE — BEST IMAGES</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
      4. OUR TEAM
      Layout matches screenshot:
      • Saturn bleeds from left edge  → EDITORIAL label → names
      • names (right-aligned) → DESIGN label → Earth bleeds right edge
      • LEAD: label → names, no planet
 ══════════════════════════════════════ -->
-<section id="team">
-  <div class="team-title">Our Team</div>
+  <section id="team">
+    <div class="team-title">Our Team</div>
 
-  <!-- EDITORIAL -->
-  <div class="team-block-editorial">
-    <img
-      src="scintilla asset/image-removebg-preview(3)_1.png"
-      alt="Saturn"
-      class="team-saturn"
-      onerror="this.style.display='none'"
-    />
-    <div class="team-inner-editorial">
-      <div class="team-label-big">EDI<br>TOR<br>IAL</div>
+    <!-- EDITORIAL -->
+    <div class="team-block-editorial">
+      <img src="assets/image-removebg-preview(3)_1.png" alt="Saturn" class="team-saturn"
+        onerror="console.error('Image failed:', this.src)" />
+      <div class="team-inner-editorial">
+        <div class="team-label-big">EDI<br>TOR<br>IAL</div>
+        <div class="team-names">
+          S. Aditiya Karthikeyan – 3rd Year, B.Tech Cyber<br>
+          Dharini Manimaran – 3rd Year, B.Tech IoT<br>
+          Jonathan Azariah – 3rd Year, B.Sc Economics<br>
+          Ananya R – 3rd Year, B.Com PA<br>
+          Lakshmi Sarmishta – 3rd Year, B.Com PA<br>
+          Anirudh Srinivasan – 3rd Year, B.Tech Cyber<br>
+          Nihma Naser – 3rd Year, B.Tech AI &amp; DS<br>
+          Shobia Nedumaran – 3rd Year, B.Sc Economics<br>
+          V. Susena – 4th Year, B.Tech AI &amp; DS<br>
+          Varshitha P – B.Tech CSE (IoT) – 2nd Year<br>
+          Deveshii Chauhan V – B.A LL.B – 2nd Year<br>
+          Harshitha Jaishankar – B.COM – 2nd Year<br>
+          Mangesh Kumar Soni – B.Tech CSE (CS) – 2nd Year<br>
+          Ajeetha Jaishankar – B.Tech CSE (CS) – 2nd Year<br>
+          Harini S – B.A LL.B – 2nd Year<br>
+          Siddharth S – B.Tech CSE (CS) – 2nd Year<br>
+          Vibilan D M – B.Tech CSE (IoT) – 2nd Year
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN -->
+    <div class="team-block-design">
+      <div class="team-inner-design">
+        <div class="team-names team-names-right">
+          Siddharth Aravinth – 3rd Year, B.Tech Cyber<br>
+          Pranov Shanker – 3rd Year, B.Tech IoT<br>
+          Pavithra T. A. – 3rd Year, B.Tech AI &amp; DS<br>
+          Srijai S. – 2nd Year, B.Tech IoT<br>
+          S. Nittin Balajee – 3rd Year, B.Tech Cyber<br>
+          Kavya I. – 3rd Year, B.Tech Cyber<br>
+          Dhanyanyaa R – B.Tech AI &amp; DS – 3rd Year<br>
+          Vandana Padman – B.Tech CSE (CS) – 2nd Year<br>
+          Miruthala Jayakumar – B.Tech AI &amp; DS – 2nd Year<br>
+          Hema Varshini – B.Tech (IoT) – 2nd Year
+        </div>
+        <div class="team-label-big">DE<br>SI<br>GN</div>
+      </div>
+      <img src="assets/image-removebg-preview(3)_2.png" alt="Planet" class="team-planet-right"
+        onerror="console.error('Image failed:', this.src)" />
+    </div>
+
+    <!-- LEAD -->
+    <div class="team-block-lead">
+      <div class="team-label-big">LE<br>AD</div>
       <div class="team-names">
-        S. Aditiya Karthikeyan – 3rd Year, B.Tech Cyber<br>
-        Dharini Manimaran – 3rd Year, B.Tech IoT<br>
-        Jonathan Azariah – 3rd Year, B.Sc Economics<br>
-        Ananya R – 3rd Year, B.Com PA<br>
-        Lakshmi Sarmishta – 3rd Year, B.Com PA<br>
-        Anirudh Srinivasan – 3rd Year, B.Tech Cyber<br>
-        Nihma Naser – 3rd Year, B.Tech AI &amp; DS<br>
-        Shobia Nedumaran – 3rd Year, B.Sc Economics<br>
-        V. Susena – 4th Year, B.Tech AI &amp; DS<br>
-        Varshitha P – B.Tech CSE (IoT) – 2nd Year<br>
-        Deveshii Chauhan V – B.A LL.B – 2nd Year<br>
-        Harshitha Jaishankar – B.COM – 2nd Year<br>
-        Mangesh Kumar Soni – B.Tech CSE (CS) – 2nd Year<br>
-        Ajeetha Jaishankar – B.Tech CSE (CS) – 2nd Year<br>
-        Harini S – B.A LL.B – 2nd Year<br>
-        Siddharth S – B.Tech CSE (CS) – 2nd Year<br>
-        Vibilan D M – B.Tech CSE (IoT) – 2nd Year
+        Nhavyae U.S. – 2nd Year, B.Tech CSE IoT<br>
+        Vikranth – 3rd Year, B.Tech CSE Cybersecurity<br>
+        Varsha Pillai M – 3rd Year, B.Tech CSE IoT
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- DESIGN -->
-  <div class="team-block-design">
-    <div class="team-inner-design">
-      <div class="team-names team-names-right">
-        Siddharth Aravinth – 3rd Year, B.Tech Cyber<br>
-        Pranov Shanker – 3rd Year, B.Tech IoT<br>
-        Pavithra T. A. – 3rd Year, B.Tech AI &amp; DS<br>
-        Srijai S. – 2nd Year, B.Tech IoT<br>
-        S. Nittin Balajee – 3rd Year, B.Tech Cyber<br>
-        Kavya I. – 3rd Year, B.Tech Cyber<br>
-        Dhanyanyaa R – B.Tech AI &amp; DS – 3rd Year<br>
-        Vandana Padman – B.Tech CSE (CS) – 2nd Year<br>
-        Miruthala Jayakumar – B.Tech AI &amp; DS – 2nd Year<br>
-        Hema Varshini – B.Tech (IoT) – 2nd Year
-      </div>
-      <div class="team-label-big">DE<br>SI<br>GN</div>
-    </div>
-    <img
-      src="scintilla asset/image-removebg-preview(3)_2.png"
-      alt="Planet"
-      class="team-planet-right"
-      onerror="this.style.display='none'"
-    />
-  </div>
-
-  <!-- LEAD -->
-  <div class="team-block-lead">
-    <div class="team-label-big">LE<br>AD</div>
-    <div class="team-names">
-      Nhavyae U.S. – 2nd Year, B.Tech CSE IoT<br>
-      Vikranth – 3rd Year, B.Tech CSE Cybersecurity<br>
-      Varsha Pillai M – 3rd Year, B.Tech CSE IoT
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════
+  <!-- ══════════════════════════════════════
      5. PREVIOUS EDITION
 ══════════════════════════════════════ -->
-<section id="prev-edition">
-  <div class="prev-header">
-    <div class="prev-title">Previous Edition</div>
-  </div>
-  <div class="prev-inner">
-    <div>
-      <div class="prev-body">
-        The first edition of Scintilla was the result of months of dedication, collaboration, and creative effort. From collecting and reviewing submissions to carefully curating and designing each page, our team worked tirelessly to bring together a magazine that truly reflects the talent and voice of our college. Every detail was thoughtfully considered, making this debut issue not just a publication, but a milestone that set the foundation for everything Scintilla aims to become.
-      </div>
-      <a href="#" class="prev-download"><u>Download pdf</u></a>
+  <section id="prev-edition">
+    <div class="prev-header">
+      <div class="prev-title">Previous Edition</div>
     </div>
-    <div class="prev-cover">
-      <img
-        src="scintilla asset/Screenshot_2026-03-19_at_5_21_39_PM.png"
-        alt="Scintilla First Edition"
-        class="prev-cover-actual-img"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-      />
-      <div class="prev-cover-fallback" style="display:none;">
-        <div class="prev-cover-uni">SHIV NADAR<br>UNIVERSITY<br>CHENNAI<br>PRESENTS</div>
-        <div class="prev-cover-name">SCINTILLA</div>
-        <div class="prev-cover-tag">IGNITING MINDS ILLUMINATING IDEAS<br>2024–2025</div>
+    <div class="prev-inner">
+      <div>
+        <div class="prev-body">
+          The first edition of Scintilla was the result of months of dedication, collaboration, and creative effort.
+          From collecting and reviewing submissions to carefully curating and designing each page, our team worked
+          tirelessly to bring together a magazine that truly reflects the talent and voice of our college. Every detail
+          was thoughtfully considered, making this debut issue not just a publication, but a milestone that set the
+          foundation for everything Scintilla aims to become.
+        </div>
+        <a href="#" class="prev-download"><u>Download pdf</u></a>
+      </div>
+      <div class="prev-cover">
+        <img src="assets/Screenshot_2026-03-19_at_5_21_39_PM.png" alt="Scintilla First Edition"
+          class="prev-cover-actual-img"
+          onerror="console.error('Image failed:', this.src); this.nextElementSibling.style.display='block';" />
+        <div class="prev-cover-fallback" style="display:none;">
+          <div class="prev-cover-uni">SHIV NADAR<br>UNIVERSITY<br>CHENNAI<br>PRESENTS</div>
+          <div class="prev-cover-name">SCINTILLA</div>
+          <div class="prev-cover-tag">IGNITING MINDS ILLUMINATING IDEAS<br>2024–2025</div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ══════════════════════════════════════
+  <!-- ══════════════════════════════════════
      6. SUBMIT CTA
      Exact reference match:
      • Full-width blue, cream bands top/bottom
@@ -819,82 +1139,95 @@ footer a:hover { text-decoration: underline; }
      • "SUBMIT YOUR WORK NOW" underlined, centred under lamp
      • 8 moon icons scattered truly randomly across the section
 ══════════════════════════════════════ -->
-<section id="submit-cta">
+  <section id="submit-cta">
 
-  <!-- 8 moon/crescent icons — positions match truly random scatter from reference -->
-  <!-- Top-left cluster -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="top:11%; left:6.5%; width:clamp(32px,4vw,58px); transform:rotate(-10deg);" onerror="this.style.display='none'" />
-  <img src="scintilla asset/Group.png" class="cta-moon" style="top:6%;  left:11%; width:clamp(18px,2.2vw,30px); transform:rotate(15deg); opacity:0.55;" onerror="this.style.display='none'" />
+    <!-- 8 moon/crescent icons — positions match truly random scatter from reference -->
+    <!-- Top-left cluster -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="top:11%; left:6.5%; width:clamp(32px,4vw,58px); transform:rotate(-10deg);"
+      onerror="console.error('Image failed:', this.src)" />
+    <img src="assets/Group.png" class="cta-moon"
+      style="top:6%;  left:11%; width:clamp(18px,2.2vw,30px); transform:rotate(15deg); opacity:0.55;"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Top-centre -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="top:8%;  left:47%; width:clamp(20px,2.4vw,32px); transform:rotate(-5deg);" onerror="this.style.display='none'" />
+    <!-- Top-centre -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="top:8%;  left:47%; width:clamp(20px,2.4vw,32px); transform:rotate(-5deg);"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Top-right -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="top:9%;  right:5%; width:clamp(16px,1.8vw,24px); transform:rotate(20deg); opacity:0.6;" onerror="this.style.display='none'" />
+    <!-- Top-right -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="top:9%;  right:5%; width:clamp(16px,1.8vw,24px); transform:rotate(20deg); opacity:0.6;"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Mid-right edge -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="top:48%; right:3.5%; width:clamp(22px,2.8vw,38px); transform:rotate(-8deg);" onerror="this.style.display='none'" />
+    <!-- Mid-right edge -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="top:48%; right:3.5%; width:clamp(22px,2.8vw,38px); transform:rotate(-8deg);"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Bottom-left area -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="bottom:18%; left:36%; width:clamp(26px,3.2vw,44px); transform:rotate(6deg);" onerror="this.style.display='none'" />
+    <!-- Bottom-left area -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="bottom:18%; left:36%; width:clamp(26px,3.2vw,44px); transform:rotate(6deg);"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Bottom-centre-left -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="bottom:10%; left:18%; width:clamp(14px,1.6vw,22px); transform:rotate(-14deg); opacity:0.55;" onerror="this.style.display='none'" />
+    <!-- Bottom-centre-left -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="bottom:10%; left:18%; width:clamp(14px,1.6vw,22px); transform:rotate(-14deg); opacity:0.55;"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Far bottom-left -->
-  <img src="scintilla asset/Group.png" class="cta-moon" style="bottom:22%; left:4%;  width:clamp(12px,1.4vw,18px); transform:rotate(30deg); opacity:0.45;" onerror="this.style.display='none'" />
+    <!-- Far bottom-left -->
+    <img src="assets/Group.png" class="cta-moon"
+      style="bottom:22%; left:4%;  width:clamp(12px,1.4vw,18px); transform:rotate(30deg); opacity:0.45;"
+      onerror="console.error('Image failed:', this.src)" />
 
-  <!-- Inner layout: text | lamp -->
-  <div class="cta-inner">
-    <div class="cta-text-block">
-      <div class="cta-body">
-        Got something creative hiding in<br>
-        your notes or gallery?<br>
-        Your ideas deserve more than just<br>
-        your notes app — let them be seen.<br>
-        Submit to Scintilla.
+    <!-- Inner layout: text | lamp -->
+    <div class="cta-inner">
+      <div class="cta-text-block">
+        <div class="cta-body">
+          Got something creative hiding in<br>
+          your notes or gallery?<br>
+          Your ideas deserve more than just<br>
+          your notes app — let them be seen.<br>
+          Submit to Scintilla.
+        </div>
+      </div>
+
+      <div class="cta-image-block">
+        <img src="assets/image-removebg-preview(4)_1.png" alt="Lamp post" class="cta-lamp-img"
+          onerror="console.error('Image failed:', this.src)" />
+        <a href="scintilla_login.html" class="cta-submit-link">SUBMIT YOUR<br>WORK NOW</a>
       </div>
     </div>
 
-    <div class="cta-image-block">
-      <img
-        src="scintilla asset/image-removebg-preview(4)_1.png"
-        alt="Lamp post"
-        class="cta-lamp-img"
-        onerror="this.style.display='none'"
-      />
-      <a href="#" class="cta-submit-link">SUBMIT YOUR<br>WORK NOW</a>
-    </div>
-  </div>
+  </section>
 
-</section>
-
-<!-- ══════════════════════════════════════
+  <!-- ══════════════════════════════════════
      7. FOOTER
 ══════════════════════════════════════ -->
-<footer>
-  <div>
-    <div class="footer-brand-name">SCINTILLA</div>
-    <div>Where ideas ignite.</div>
-    <br>
-    <div class="footer-links-head">Links</div>
+  <footer>
     <div>
-      <a href="#">Home</a> &nbsp;·&nbsp;
-      <a href="#">Submit</a> &nbsp;·&nbsp;
-      <a href="#">First Edition</a>
+      <div class="footer-brand-name">SCINTILLA</div>
+      <div>Where ideas ignite.</div>
+      <br>
+      <div class="footer-links-head">Links</div>
+      <div>
+        <a href="#">Home</a> &nbsp;·&nbsp;
+        <a href="scintilla_login.html">Submit</a> &nbsp;·&nbsp;
+        <a href="#">First Edition</a>
+      </div>
     </div>
-  </div>
-  <div></div>
-  <div class="footer-contact">
-    <div class="footer-links-head">Contact</div>
-    <div>scintilla@snuchennai.edu.in</div>
-    <div>@scintilla.mag</div>
-  </div>
-  <div class="footer-bottom">
-    © 2026 Scintilla Magazine<br>
-    Designed &amp; Built by Nhavyae US
-  </div>
-</footer>
+    <div></div>
+    <div class="footer-contact">
+      <div class="footer-links-head">Contact</div>
+      <div>scintilla@snuchennai.edu.in</div>
+      <div>@scintilla.mag</div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Scintilla Magazine<br>
+      Designed &amp; Built by Nhavyae US
+    </div>
+  </footer>
 
 </body>
+
 </html>

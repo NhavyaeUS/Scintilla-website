@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scintilla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Khand:wght@700&family=Hind:wght@400;500&family=Fragment+Mono&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      background-color: #f5ecd7;
+      font-family: 'Hind', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: relative;
+      z-index: 10;
+      padding: 18px 40px;
+      border-top: 1px solid #1a1a1a55;
+      border-bottom: 1px solid #1a1a1a55;
+    }
+
+    nav span {
+      font-family: 'Fragment Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      color: #1a1a1a;
+    }
+
+    /* ── MOON BASE ── */
+    .moon {
+      position: absolute;
+      background-image: url('assets/moon_asset.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none;
+    }
+
+    /* ── INDIVIDUAL MOONS (FIGMA → % CONVERSION) ── */
+
+    /* TOP CENTER */
+    .moon1 {
+      left: 54.4%;
+      top: -26.5%;
+      width: 27%;
+      aspect-ratio: 1 / 1;
+      transform: rotate(5deg);
+      z-index: 1;
+    }
+
+    /* RIGHT BIG */
+    .moon2 {
+      left: 75.5%;
+      top: 23.7%;
+      width: 35%;
+      aspect-ratio: 1 / 1;
+      transform: rotate(5deg);
+      z-index: 2;
+    }
+
+    /* BOTTOM LEFT BIG */
+    .moon3 {
+      left: -8.2%;
+      top: 55.1%;
+      width: 36.6%;
+      aspect-ratio: 1 / 1;
+      transform: rotate(-13deg);
+      z-index: 1;
+    }
+
+    /* TOP LEFT SMALL */
+    .moon4 {
+      left: 7.1%;
+      top: 14.8%;
+      width: 16.8%;
+      aspect-ratio: 1 / 1;
+      transform: rotate(5deg);
+      z-index: 3;
+    }
+
+    /* BOTTOM RIGHT SMALL */
+    .moon5 {
+      left: 75.5%;
+      top: 88.2%;
+      width: 16.8%;
+      aspect-ratio: 1 / 1;
+      transform: rotate(-56deg);
+      z-index: 2;
+    }
+
+    /* ── CENTRE CONTENT ── */
+    .center {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px 80px;
+      gap: 0;
+    }
+
+    .title {
+      font-family: 'Khand', sans-serif;
+      font-size: clamp(72px, 10vw, 130px);
+      font-weight: 700;
+      color: #0d0d0d;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-family: 'Hind', sans-serif;
+      font-size: clamp(14px, 1.4vw, 18px);
+      font-weight: 400;
+      color: #1a1a1a;
+      letter-spacing: 0.01em;
+      margin-bottom: 52px;
+    }
+
+    .section-label {
+      font-family: 'Fragment Mono', monospace;
+      font-size: clamp(15px, 1.5vw, 20px);
+      color: #1a1a1a;
+      letter-spacing: 0.02em;
+      margin-bottom: 14px;
+    }
+
+    .desc {
+      font-family: 'Fragment Mono', monospace;
+      font-size: clamp(12px, 1.1vw, 15px);
+      color: #1a1a1a;
+      margin-bottom: 30px;
+    }
+
+    /* ── BUTTON ── */
+    .btn-ms {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 24px 11px 18px;
+      background: #f0f0f0;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      margin-bottom: 36px;
+    }
+
+    .btn-ms:hover {
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-ms img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .btn-ms span {
+      font-family: 'Fragment Mono', monospace;
+      font-size: 14px;
+      color: #1a1a1a;
+      text-decoration: underline;
+    }
+
+    /* ── NOTE ── */
+    .note-label {
+      font-family: 'Fragment Mono', monospace;
+      font-size: clamp(12px, 1vw, 14px);
+      color: #1a1a1a;
+      text-decoration: underline;
+      margin-bottom: 6px;
+    }
+
+    .note-text {
+      font-family: 'Fragment Mono', monospace;
+      font-size: clamp(11px, 1vw, 14px);
+      color: #1a1a1a;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav {
+        padding: 14px 20px;
+      }
+
+      .moon-top-right {
+        width: 35vw;
+        height: 35vw;
+        top: -10vw;
+        right: -5vw;
+      }
+
+      .moon-top-left {
+        width: 28vw;
+        height: 28vw;
+        top: 8vh;
+        left: -4vw;
+      }
+
+      .moon-bottom-left {
+        width: 48vw;
+        height: 48vw;
+        bottom: -10vw;
+        left: -8vw;
+      }
+
+      .moon-bottom-right {
+        width: 38vw;
+        height: 38vw;
+        bottom: -8vw;
+        right: -6vw;
+      }
+
+      .center {
+        padding: 40px 20px 60px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Moons -->
+    <img src="assets/moon_asset.png" class="moon moon1">
+    <img src="assets/moon_asset.png" class="moon moon2">
+    <img src="assets/moon_asset.png" class="moon moon3">
+    <img src="assets/moon_asset.png" class="moon moon4">
+    <img src="assets/moon_asset.png" class="moon moon5">
+    <!-- Nav -->
+    <nav><a href="index.html" style="text-decoration: none;"><span>HOME</span></a></nav>
+
+    <!-- Centre -->
+    <main class="center">
+      <h1 class="title">Scintilla</h1>
+      <p class="subtitle">Igniting Minds. Illuminating Ideas.</p>
+
+      <p class="section-label">Access Submission Portal</p>
+      <p class="desc">Sign in using your college account to submit your work</p>
+
+      <a href="submit.html" class="btn-ms">
+        <img
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAvVBMVEX////zUSN/uQICpO//uQH///39//r//fLr///tsxD//+Z5qQDxUSX//9wAkdHu///+/+vQjXz/9O1pudHQjXPR+PnTSx1/tAD7+coAo/HhUCXu+dP5//oAm+N4rgCAuAGnwm0Ak9e2QRXESCHBiXv/9fLu+NlvnwBzmgDVUivHiYT/9Pbr+stwqAB4pADAinLCkGfVs6Srv3T9+P/3/+/J+fr+87f7+MoAgbkNjslqqsb+78TqvD7frCJssME4QYTWAAACUElEQVR4nO3dXXPSQBSA4ZV4diEFkqKtDa6iVuoH9atUW9T6/39WN9DYXtSZwslKyLxvh7A3zeyTXTq92cEYIiIiIiIiIiIiIiIiIiIiIqKGJlJetj2LmMntpXKuNWh6d+fZfmFDUz5Lqe6irAbJv2bolK0+gTZPVeXRjOLeHKo6fjsVL3Lybk/V+zzaKrrDvqrx/sh7sc9fdjqTyaTTWb6tPZjspTGFjzQFoQ1rWAo1Idyu0CPceWH7d2n7he3fpQgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIEOEGwv7yZ+1Bf7w/tV7saWOF4o7Hqj58nDln5PTTM1Wf4wntl6eqvn6biTfm5OyVqjMXbZeKG2nKB84Yn4lLc12NPU8szhqTeTeaWk1iI07x78Nba3DbvGTm4aOoI8Zbw/IY9ebnr8XMZEnzmW4WNWnuvbfi2YffFevDAs7n/ly1hOFe8YgHur4fZOfOzPMfRxt3EV6DeH9Ls8vXNw1vXg8aVG/Dxc+udWJ//e6puor3P013mBRFkRSr64MHSTV48SQzYZMd9R6r6g1iCsNEN6lIdkeoqBJeINx5Yft3KUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRPh/hZxGQBhTuFAJkzp3aZyDpNnlYqhp8WclvKrhdF6krwXOuqqy8nisiEsHqtKIR53rqcHf6UxERERERERERERERERERERERERb7hpQ1W08w53kmAAAAABJRU5ErkJggg=="
+          alt="Microsoft logo" />
+        <span>Sign in with Microsoft</span>
+      </a>
+
+      <p class="note-label">NOTE</p>
+      <p class="note-text">Only @snuchennai.edu.in accounts are allowed</p>
+    </main>
+
+  </div>
+</body>
+
+</html>
