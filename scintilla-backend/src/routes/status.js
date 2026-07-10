@@ -1,10 +1,16 @@
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const oneDriveService = require('../services/oneDriveService');
 const excelService = require('../services/excelService');
+const { statusLimiter } = require('../middleware/rateLimiter');
 const logger = require('../utils/logger');
 
-// Middleware to check static bearer token
+/**
+ * Timing-safe bearer token check middleware.
+ * Uses crypto.timingSafeEqual to prevent timing attacks
+ * that could leak token characters through response time analysis.
+ */
 const requireToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -13,7 +19,19 @@ const requireToken = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  if (token !== process.env.STATUS_BEARER_TOKEN) {
+  const expectedToken = process.env.STATUS_BEARER_TOKEN || "";
+
+  // Timing-safe comparison: prevents timing attacks by ensuring
+  // comparison takes constant time regardless of where characters differ
+  if (token.length !== expectedToken.length) {
+    logger.error("Auth error", { endpoint: "/api/v1/status", header_present: true });
+    return res.status(403).json({ status: "error", message: "Forbidden" });
+  }
+
+  const tokenBuffer = Buffer.from(token, 'utf8');
+  const expectedBuffer = Buffer.from(expectedToken, 'utf8');
+
+  if (!crypto.timingSafeEqual(tokenBuffer, expectedBuffer)) {
     logger.error("Auth error", { endpoint: "/api/v1/status", header_present: true });
     return res.status(403).json({ status: "error", message: "Forbidden" });
   }
@@ -21,7 +39,7 @@ const requireToken = (req, res, next) => {
   next();
 };
 
-router.get('/', requireToken, async (req, res) => {
+router.get('/', statusLimiter, requireToken, async (req, res) => {
   try {
     const oneDriveStatus = await oneDriveService.checkHealth();
     const excelStatus = await excelService.checkHealth();

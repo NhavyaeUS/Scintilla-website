@@ -4,12 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scintilla</title>
+  <title>Sign In — Scintilla</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Khand:wght@700&family=Hind:wght@400;500&family=Fragment+Mono&display=swap"
     rel="stylesheet" />
+
+  <!-- MSAL.js v2 Browser — Microsoft Authentication Library -->
+  <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+
   <style>
     *,
     *::before,
@@ -176,11 +180,21 @@
       text-decoration: none;
       transition: box-shadow 0.2s ease, transform 0.2s ease;
       margin-bottom: 36px;
+      font-family: 'Fragment Mono', monospace;
+      font-size: 14px;
+      color: #1a1a1a;
     }
 
     .btn-ms:hover {
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
       transform: translateY(-1px);
+    }
+
+    .btn-ms:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .btn-ms img {
@@ -189,10 +203,39 @@
     }
 
     .btn-ms span {
-      font-family: 'Fragment Mono', monospace;
-      font-size: 14px;
-      color: #1a1a1a;
       text-decoration: underline;
+    }
+
+    /* ── STATUS MESSAGE ── */
+    .auth-status {
+      font-family: 'Fragment Mono', monospace;
+      font-size: 13px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      max-width: 420px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .auth-status.error {
+      display: block;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .auth-status.success {
+      display: block;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .auth-status.loading {
+      display: block;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
     }
 
     /* ── NOTE ── */
@@ -208,6 +251,23 @@
       font-family: 'Fragment Mono', monospace;
       font-size: clamp(11px, 1vw, 14px);
       color: #1a1a1a;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #856404;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* ── RESPONSIVE ── */
@@ -255,11 +315,11 @@
   <div class="page">
 
     <!-- Moons -->
-    <img src="assets/moon_asset.png" class="moon moon1">
-    <img src="assets/moon_asset.png" class="moon moon2">
-    <img src="assets/moon_asset.png" class="moon moon3">
-    <img src="assets/moon_asset.png" class="moon moon4">
-    <img src="assets/moon_asset.png" class="moon moon5">
+    <img src="assets/moon_asset.png" class="moon moon1" alt="">
+    <img src="assets/moon_asset.png" class="moon moon2" alt="">
+    <img src="assets/moon_asset.png" class="moon moon3" alt="">
+    <img src="assets/moon_asset.png" class="moon moon4" alt="">
+    <img src="assets/moon_asset.png" class="moon moon5" alt="">
     <!-- Nav -->
     <nav><a href="index.html" style="text-decoration: none;"><span>HOME</span></a></nav>
 
@@ -269,20 +329,196 @@
       <p class="subtitle">Igniting Minds. Illuminating Ideas.</p>
 
       <p class="section-label">Access Submission Portal</p>
-      <p class="desc">Sign in using your college account to submit your work</p>
+      <p class="desc">Sign in using your college Microsoft account to submit your work</p>
 
-      <a href="submit.html" class="btn-ms">
+      <!-- Auth status message -->
+      <div class="auth-status" id="authStatus"></div>
+
+      <!-- Real Microsoft SSO button -->
+      <button class="btn-ms" id="signInBtn" onclick="signIn()">
         <img
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAvVBMVEX////zUSN/uQICpO//uQH///39//r//fLr///tsxD//+Z5qQDxUSX//9wAkdHu///+/+vQjXz/9O1pudHQjXPR+PnTSx1/tAD7+coAo/HhUCXu+dP5//oAm+N4rgCAuAGnwm0Ak9e2QRXESCHBiXv/9fLu+NlvnwBzmgDVUivHiYT/9Pbr+stwqAB4pADAinLCkGfVs6Srv3T9+P/3/+/J+fr+87f7+MoAgbkNjslqqsb+78TqvD7frCJssME4QYTWAAACUElEQVR4nO3dXXPSQBSA4ZV4diEFkqKtDa6iVuoH9atUW9T6/39WN9DYXtSZwslKyLxvh7A3zeyTXTq92cEYIiIiIiIiIiIiIiIiIiIiIqKGJlJetj2LmMntpXKuNWh6d+fZfmFDUz5Lqe6irAbJv2bolK0+gTZPVeXRjOLeHKo6fjsVL3Lybk/V+zzaKrrDvqrx/sh7sc9fdjqTyaTTWb6tPZjspTGFjzQFoQ1rWAo1Idyu0CPceWH7d2n7he3fpQgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIEOEGwv7yZ+1Bf7w/tV7saWOF4o7Hqj58nDln5PTTM1Wf4wntl6eqvn6biTfm5OyVqjMXbZeKG2nKB84Yn4lLc12NPU8szhqTeTeaWk1iI07x78Nba3DbvGTm4aOoI8Zbw/IY9ebnr8XMZEnzmW4WNWnuvbfi2YffFevDAs7n/ly1hOFe8YgHur4fZOfOzPMfRxt3EV6DeH9Ls8vXNw1vXg8aVG/Dxc+udWJ//e6puor3P013mBRFkRSr64MHSTV48SQzYZMd9R6r6g1iCsNEN6lIdkeoqBJeINx5Yft3KUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRPh/hZxGQBhTuFAJkzp3aZyDpNnlYqhp8WclvKrhdF6krwXOuqqy8nisiEsHqtKIR53rqcHf6UxERERERERERERERERERERERERb7hpQ1W08w53kmAAAAABJRU5ErkJggg=="
           alt="Microsoft logo" />
         <span>Sign in with Microsoft</span>
-      </a>
+      </button>
 
       <p class="note-label">NOTE</p>
       <p class="note-text">Only @snuchennai.edu.in accounts are allowed</p>
     </main>
 
   </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    //  MSAL.js Configuration — Microsoft SSO for Scintilla
+    // ═══════════════════════════════════════════════════════════
+
+    const ALLOWED_DOMAIN = 'snuchennai.edu.in';
+
+    const msalConfig = {
+      auth: {
+        // Azure AD App Registration — Client ID
+        clientId: 'a70575c0-d17b-438a-b8cc-8341626ee44d',
+        // Azure AD Tenant — restricts login to this organization only
+        authority: 'https://login.microsoftonline.com/5beb351c-3fb8-418f-b612-fe36ace96ef3',
+        // Where Microsoft redirects after login — must match Azure portal config
+        redirectUri: window.location.origin + '/scintilla_login.html',
+      },
+      cache: {
+        cacheLocation: 'sessionStorage',
+        storeAuthStateInCookie: false,
+      },
+    };
+
+    const loginRequest = {
+      scopes: ['User.Read'],
+      prompt: 'select_account',
+    };
+
+    // Initialize MSAL
+    var msalInstance;
+    try {
+      if (typeof msal === 'undefined') {
+        throw new Error("MSAL library failed to load from CDN. Please check your internet connection.");
+      }
+      msalInstance = new msal.PublicClientApplication(msalConfig);
+    } catch (err) {
+      console.error("MSAL Initialization Error:", err);
+      showStatus('error', "Authentication service is unavailable: " + err.message);
+    }
+
+    // Dynamic MSAL initialization check (MSAL v3+ requires initialize(), MSAL v2 does not)
+    async function initMsal() {
+      if (!msalInstance) return;
+      try {
+        if (typeof msalInstance.initialize === 'function') {
+          await msalInstance.initialize();
+        }
+        const response = await msalInstance.handleRedirectPromise();
+        handleResponse(response);
+      } catch (error) {
+        handleError(error);
+      }
+    }
+
+    // Handle redirect response (if user was redirected back from Microsoft)
+    initMsal();
+
+    /**
+     * Handle the authentication response from Microsoft.
+     * Validates the email domain and stores auth info in sessionStorage.
+     */
+    function handleResponse(response) {
+      if (!response) return; // No redirect response, user hasn't logged in yet
+
+      const account = response.account;
+      const email = (account.username || '').toLowerCase();
+      const displayName = account.name || '';
+
+      // Verify the email domain
+      if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
+        showStatus('error', `Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed. You signed in as: ${escapeHtml(email)}`);
+        // Sign out the unauthorized account
+        msalInstance.logoutPopup({ account: account }).catch(() => {});
+        return;
+      }
+
+      // Store authenticated user info securely in sessionStorage
+      const authData = {
+        name: displayName,
+        email: email,
+        timestamp: Date.now(),
+        // Token expiry — session valid for 2 hours
+        expiresAt: Date.now() + (2 * 60 * 60 * 1000),
+      };
+      sessionStorage.setItem('scintilla_auth', JSON.stringify(authData));
+
+      showStatus('success', `Welcome, ${escapeHtml(displayName)}! Redirecting to submission portal...`);
+
+      // Redirect to the submission form
+      setTimeout(() => {
+        window.location.href = 'submit.html';
+      }, 1200);
+    }
+
+    /**
+     * Handle authentication errors.
+     */
+    function handleError(error) {
+      console.error('MSAL Error:', error);
+      const btn = document.getElementById('signInBtn');
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Sign in with Microsoft';
+
+      if (error.errorCode === 'user_cancelled') {
+        showStatus('error', 'Sign-in was cancelled. Click the button to try again.');
+      } else if (error.errorCode === 'popup_window_error') {
+        showStatus('error', 'Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.');
+      } else {
+        showStatus('error', 'Authentication failed: ' + escapeHtml(error.message || 'Unknown error'));
+      }
+    }
+
+    /**
+     * Initiate Microsoft SSO login via popup.
+     */
+    async function signIn() {
+      const btn = document.getElementById('signInBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Signing in...';
+      showStatus('loading', '<span class="spinner"></span> Opening Microsoft sign-in...');
+
+      if (!msalInstance) {
+        handleError(new Error("Authentication service is not initialized. Please check your network and refresh the page."));
+        return;
+      }
+
+      try {
+        if (typeof msalInstance.initialize === 'function') {
+          await msalInstance.initialize();
+        }
+        const response = await msalInstance.loginPopup(loginRequest);
+        handleResponse(response);
+      } catch (error) {
+        handleError(error);
+      }
+    }
+
+    /**
+     * Show status message to the user.
+     */
+    function showStatus(type, message) {
+      const el = document.getElementById('authStatus');
+      el.className = 'auth-status ' + type;
+      el.innerHTML = message;
+    }
+
+    /**
+     * Escape HTML to prevent XSS in status messages.
+     */
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  On page load: check if user is already authenticated
+    // ═══════════════════════════════════════════════════════════
+    (function checkExistingAuth() {
+      try {
+        const stored = sessionStorage.getItem('scintilla_auth');
+        if (stored) {
+          const auth = JSON.parse(stored);
+          if (auth.expiresAt && auth.expiresAt > Date.now() && auth.email && auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
+            showStatus('success', `Already signed in as ${escapeHtml(auth.name)}. Redirecting...`);
+            setTimeout(() => { window.location.href = 'submit.html'; }, 800);
+          } else {
+            // Expired or invalid — clear it
+            sessionStorage.removeItem('scintilla_auth');
+          }
+        }
+      } catch (e) { /* ignore parse errors */ }
+    })();
+  </script>
 </body>
 
 </html>

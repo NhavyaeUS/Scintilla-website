@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const logger = require('../utils/logger');
 const oneDriveService = require('../services/oneDriveService');
 const excelService = require('../services/excelService');
-const fileType = require('file-type');
+const { fileTypeFromBuffer } = require('file-type');
 
 const ALLOWED_MIME_TYPES = new Set([
   'application/pdf', 'image/png', 'image/jpeg', 'image/gif', 
@@ -11,6 +11,22 @@ const ALLOWED_MIME_TYPES = new Set([
   'text/plain' // TXT
 ]);
 
+/**
+ * Sanitize internal error messages before including them in API responses.
+ * Prevents leaking stack traces, file paths, or internal system details.
+ */
+function sanitizeErrorMessage(err) {
+  const message = err instanceof Error ? err.message : String(err);
+  // Map known internal error patterns to safe messages
+  if (message.includes('ECONNREFUSED') || message.includes('ETIMEDOUT') || message.includes('Graph API error')) {
+    return 'Service temporarily unavailable';
+  }
+  if (message.includes('access token') || message.includes('authentication')) {
+    return 'Authentication service error';
+  }
+  return 'Upload processing failed';
+}
+
 async function handleSubmission(req, res) {
   try {
     const totalSize = req.headers['content-length'];
@@ -18,13 +34,17 @@ async function handleSubmission(req, res) {
     const submissions = req.submissionsParsed;
     const files = req.files;
 
-    logger.info("Content received", { ip: req.ip, file_count: files.length, total_bytes: totalSize });
+    logger.info("Content received", { requestId: req.id, ip: req.ip, file_count: files.length, total_bytes: totalSize });
 
     // Validate MIME types based on magic bytes
     for (const file of files) {
-      const type = await fileType.fromBuffer(file.buffer);
-      if (!type || !ALLOWED_MIME_TYPES.has(type.mime)) {
-        logger.warn("Validation failed", { ip: req.ip, failed_field: "files", rejection_reason: "Unsupported MIME type" });
+      const type = await fileTypeFromBuffer(file.buffer);
+      // file-type can't detect text/plain via magic bytes (text has none),
+      // so fall back to checking the extension for .txt files
+      const detectedMime = type?.mime
+        || (file.originalname.toLowerCase().endsWith('.txt') ? 'text/plain' : null);
+      if (!detectedMime || !ALLOWED_MIME_TYPES.has(detectedMime)) {
+        logger.warn("Validation failed", { requestId: req.id, ip: req.ip, failed_field: "files", rejection_reason: "Unsupported MIME type" });
         return res.status(415).json({
           status: "error",
           code: "UNSUPPORTED_MEDIA",
@@ -34,9 +54,10 @@ async function handleSubmission(req, res) {
       }
     }
 
+    // Higher entropy submission ID: 8 random bytes = 16 hex chars (2^64 possibilities)
     const unixTimestamp = Math.floor(Date.now() / 1000);
-    const randomHex6 = crypto.randomBytes(3).toString('hex');
-    const submissionId = `sub_${unixTimestamp}_${randomHex6}`;
+    const randomHex = crypto.randomBytes(8).toString('hex');
+    const submissionId = `sub_${unixTimestamp}_${randomHex}`;
     
     let entries = [];
     let hasFailedEntries = false;
@@ -61,7 +82,7 @@ async function handleSubmission(req, res) {
           submissionId
         );
       } catch (err) {
-        oneDriveError = err.message;
+        oneDriveError = err;
       }
 
       // 2. Add to Excel if OneDrive upload was successful
@@ -81,16 +102,28 @@ async function handleSubmission(req, res) {
           ];
           excelRow = await excelService.appendRow(rowData, submissionId);
         } catch (err) {
-          excelError = err.message;
+          excelError = err;
         }
       }
 
+      // Clear file buffer to free memory as soon as we're done with each file
+      file.buffer = null;
+
       if (oneDriveError || excelError) {
         hasFailedEntries = true;
+        const rawError = oneDriveError || excelError;
+        logger.error("Submission entry failed", {
+          requestId: req.id,
+          submissionId,
+          index: i,
+          error: rawError.message,
+          stack: rawError.stack,
+        });
         entries.push({
           title: submissionData.title,
           category: submissionData.category,
-          error: oneDriveError || excelError
+          // Sanitized error — never expose internal details to the client
+          error: sanitizeErrorMessage(rawError)
         });
       } else {
         entries.push({
@@ -99,7 +132,7 @@ async function handleSubmission(req, res) {
           driveUrl: oneDriveUrl,
           sheetRow: excelRow
         });
-        logger.info("Submission success", { submissionId, oneDriveUrl, excelRow });
+        logger.info("Submission success", { requestId: req.id, submissionId, oneDriveUrl, excelRow });
       }
     }
 
@@ -113,7 +146,7 @@ async function handleSubmission(req, res) {
       return res.status(500).json({
         status: "error",
         code: "INTERNAL_ERROR",
-        message: "Failed to upload any files to OneDrive or Excel.",
+        message: "Failed to process submissions. Please try again later.",
         submissionId: submissionId,
         entries: entries
       });
@@ -127,7 +160,7 @@ async function handleSubmission(req, res) {
     });
 
   } catch (err) {
-    logger.error("Submission failed", { error: err.message, stack: err.stack });
+    logger.error("Submission failed", { requestId: req.id, error: err.message, stack: err.stack });
     res.status(500).json({ status: "error", code: "SERVER_ERROR", message: "Unexpected server error." });
   }
 }

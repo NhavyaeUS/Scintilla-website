@@ -330,7 +330,7 @@
     <a href="index.html#publish">What We Publish</a>
     <a href="index.html#prev-edition">First Edition</a>
     <a href="index.html#team">Team</a>
-    <a href="index.html" style="color: #ff6b6b; font-weight: 500;">Logout</a>
+    <a href="#" onclick="logout(); return false;" style="color: #ff6b6b; font-weight: 500;">Logout</a>
   </div>
 </div>
 
@@ -499,6 +499,56 @@
 </footer>
 
 <script>
+  // ── Authentication check (MSAL.js auth guard) ──
+  const ALLOWED_DOMAIN = 'snuchennai.edu.in';
+  
+  function checkAuth() {
+    try {
+      const stored = sessionStorage.getItem('scintilla_auth');
+      if (!stored) {
+        window.location.href = 'scintilla_login.html';
+        return false;
+      }
+      const auth = JSON.parse(stored);
+      if (!auth.expiresAt || auth.expiresAt < Date.now() || !auth.email || !auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
+        sessionStorage.removeItem('scintilla_auth');
+        window.location.href = 'scintilla_login.html';
+        return false;
+      }
+      
+      // Auto-fill and disable name & email fields
+      const nameInput = document.getElementById('fullName');
+      const emailInput = document.getElementById('email');
+      if (nameInput) {
+        nameInput.value = auth.name || '';
+        nameInput.disabled = true;
+        nameInput.style.backgroundColor = '#f0f0f0';
+        nameInput.style.cursor = 'not-allowed';
+      }
+      if (emailInput) {
+        emailInput.value = auth.email || '';
+        emailInput.disabled = true;
+        emailInput.style.backgroundColor = '#f0f0f0';
+        emailInput.style.cursor = 'not-allowed';
+      }
+      return true;
+    } catch (e) {
+      sessionStorage.removeItem('scintilla_auth');
+      window.location.href = 'scintilla_login.html';
+      return false;
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('scintilla_auth');
+    window.location.href = 'scintilla_login.html';
+  }
+
+  // Execute immediately before page content is interactive
+  if (!checkAuth()) {
+    document.body.style.display = 'none';
+  }
+
   // ── Tab switching ──
   function switchTab(tab) {
     const uploadZone = document.getElementById('uploadZone');
@@ -538,11 +588,14 @@
     const allowPublish = document.getElementById('allowPublish').checked;
 
     if (!fullName) return showError('Please enter your full name.');
+    if (fullName.length > 100) return showError('Name must be 100 characters or less.');
     if (!email) return showError('Please enter your email address.');
+    if (!email.endsWith('@snuchennai.edu.in')) return showError('Only @snuchennai.edu.in email addresses are allowed.');
     if (!course) return showError('Please select your course.');
     if (!year) return showError('Please select your year.');
     if (!category) return showError('Please select a category.');
     if (!title) return showError('Please enter a title for your submission.');
+    if (title.length > 120) return showError('Title must be 120 characters or less.');
     if (!originalWork) return showError('Please confirm this is your original work.');
     if (!allowPublish) return showError('Please consent to publication.');
     showError('');
@@ -559,6 +612,10 @@
       const fileInput = document.getElementById('fileInput');
       if (!fileInput.files || fileInput.files.length === 0) return showError('Please upload a file.');
       submissionFile = fileInput.files[0];
+      // Client-side file size check (25 MB max)
+      if (submissionFile.size > 25 * 1024 * 1024) {
+        return showError('File exceeds 25 MB limit. Please choose a smaller file.');
+      }
     }
 
     const description = document.getElementById('description').value.trim();
@@ -671,7 +728,11 @@
     });
 
     try {
-      const resp = await fetch('http://localhost:3000/api/v1/submit', {
+      // Use relative path when served from the same origin, or configure for your production domain
+      const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:3000'
+        : `${window.location.protocol}//${window.location.hostname}`;
+      const resp = await fetch(`${API_BASE}/api/v1/submit`, {
         method: 'POST',
         body: formData
       });
@@ -705,13 +766,13 @@
     const file = e.dataTransfer.files[0];
     if (file) {
       document.getElementById('fileInput').files = e.dataTransfer.files;
-      uploadZone.querySelector('label').innerHTML = `<strong>${file.name}</strong><br><span style="font-size:11px;color:#aaa;">File selected</span>`;
+      uploadZone.querySelector('label').innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><span style="font-size:11px;color:#aaa;">File selected</span>`;
     }
   });
   document.getElementById('fileInput').addEventListener('change', e => {
     const file = e.target.files[0];
     if (file) {
-      uploadZone.querySelector('label').innerHTML = `<strong>${file.name}</strong><br><span style="font-size:11px;color:#aaa;">File selected</span>`;
+      uploadZone.querySelector('label').innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><span style="font-size:11px;color:#aaa;">File selected</span>`;
     }
   });
 </script>
