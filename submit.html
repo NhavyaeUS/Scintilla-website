@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Submit your poetry, articles, artwork, photography, prose, and creative works to Scintilla Magazine." />
 <title>Submit — Scintilla</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -336,7 +337,7 @@
 
 <!-- ══════════════════ BREADCRUMB ══════════════════ -->
 <div class="breadcrumb">
-  <a href="index.html">Home</a> &gt; <a href="#">Submit</a> &gt; Submission Form
+  <a href="index.html">Home</a> &gt; <a href="scintilla_login.html">Submit</a> &gt; Submission Form
 </div>
 
 <!-- ══════════════════ PAGE TITLE ══════════════════ -->
@@ -492,7 +493,7 @@
 <footer style="background:var(--cream);border-top:1px solid var(--gray-border);padding:32px 40px 20px;font-family:var(--mono);font-size:12px;color:#888;text-align:center;">
   <div style="margin-bottom:6px;">
     <a href="index.html" style="color:#888;text-decoration:none;margin:0 12px;">Home</a>·
-    <a href="#" style="color:#888;text-decoration:none;margin:0 12px;">Submit</a>·
+    <a href="submit.html" style="color:#888;text-decoration:none;margin:0 12px;">Submit</a>·
     <a href="index.html#prev-edition" style="color:#888;text-decoration:none;margin:0 12px;">First Edition</a>
   </div>
   © 2026 Scintilla Magazine — scintilla@snuchennai.edu.in — @scintilla.mag
@@ -520,10 +521,14 @@
       const nameInput = document.getElementById('fullName');
       const emailInput = document.getElementById('email');
       if (nameInput) {
-        nameInput.value = auth.name || '';
-        nameInput.disabled = true;
-        nameInput.style.backgroundColor = '#f0f0f0';
-        nameInput.style.cursor = 'not-allowed';
+        if (auth.name) {
+          nameInput.value = auth.name;
+          nameInput.disabled = true;
+          nameInput.style.backgroundColor = '#f0f0f0';
+          nameInput.style.cursor = 'not-allowed';
+        } else {
+          nameInput.disabled = false;
+        }
       }
       if (emailInput) {
         emailInput.value = auth.email || '';
@@ -728,10 +733,11 @@
     });
 
     try {
-      // Use relative path when served from the same origin, or configure for your production domain
-      const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      // Resolve API base URL: localhost:3000 in dev, or current origin in production
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const API_BASE = isLocal && window.location.port !== '3000'
         ? 'http://localhost:3000'
-        : `${window.location.protocol}//${window.location.hostname}`;
+        : window.location.origin;
       const resp = await fetch(`${API_BASE}/api/v1/submit`, {
         method: 'POST',
         body: formData

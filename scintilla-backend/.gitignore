@@ -1,5 +1,20 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment and Secret Files
 .env
-logs/
+.env.*
+*.env
 *.pem
+*.key
+*.cert
+*.crt
+
+# Application Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS Files
 .DS_Store
+Thumbs.db

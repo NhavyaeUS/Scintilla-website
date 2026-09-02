@@ -1,11 +1,36 @@
-frames/
-index2.html
-index(1).html
-index(2).html
+# Operating System & IDE Files
 .DS_Store
 **/.DS_Store
-venv/
-node_modules/
+Thumbs.db
+.vscode/
+
+# Environment & Secret Files
 .env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+
+# Node & Package Managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python Virtual Environments
+venv/
+.venv/
+__pycache__/
+
+# Application Logs
+logs/
+*.log
+
+# Design drafts, temporary files & Internal PRDs
+frames/
+index2.html
+index(*).html
 /Scintilla_Backend_PRD.pdf
 /Scintilla_Backend_PRD.txt

@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Scintilla — The student-run literary and arts magazine of Shiv Nadar University Chennai. Igniting minds, illuminating ideas." />
   <title>Scintilla — Igniting Minds. Illuminating Ideas.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1076,7 +1077,7 @@
       display: none;
       position: relative;
       width: 100%;
-      max-width: 820px;
+      max-width: 890px;
     }
     .ann-expanded.visible {
       display: block;
@@ -1109,7 +1110,7 @@
     /* Cartoon collage card — left, portrait, slight left-tilt, overlaps envelope */
     .ann-cartoon-card {
       position: absolute;
-      left: 10%;
+      left: 5%;
       top: 50%;
       transform: translateY(-50%) rotate(-2.5deg);
       width: clamp(130px, 16vw, 210px);
@@ -1131,17 +1132,17 @@
     /* Blue wavy card — right side, contains text + banana cat */
     .ann-text-card {
       position: absolute;
-      right: 4%;
+      right: 2%;
       top: 50%;
       transform: translateY(-50%);
-      width: clamp(280px, 52%, 520px);
-      height: clamp(220px, 30vw, 360px);
+      width: clamp(340px, 60%, 610px);
+      height: clamp(210px, 27vw, 310px);
       background: url('assets/Rectangle.png') no-repeat center center;
       background-size: 100% 100%;
-      padding: clamp(24px, 3vw, 38px) clamp(22px, 2.8vw, 34px);
+      padding: clamp(20px, 2.5vw, 32px) clamp(24px, 3.2vw, 40px);
       display: flex;
-      align-items: flex-start;
-      gap: clamp(8px, 1.2vw, 14px);
+      align-items: center;
+      gap: clamp(12px, 1.6vw, 22px);
       z-index: 2;
       filter: drop-shadow(0 10px 24px rgba(0,0,0,0.12));
       animation: cardRight 0.7s 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
@@ -1155,15 +1156,14 @@
     /* Typewriter text */
     .ann-typetext {
       font-family: var(--mono);
-      font-size: clamp(11px, 1.05vw, 13px);
-      line-height: 1.8;
+      font-size: clamp(12px, 1.15vw, 14px);
+      line-height: 1.65;
       color: #1a1a1a;
       text-align: justify;
       flex: 1 1 0;
       min-width: 0;
       min-height: 0;
-      overflow-y: auto;
-      max-height: 100%;
+      overflow: visible;
     }
     .ann-typetext::after {
       content: '|';
@@ -1177,7 +1177,7 @@
 
     /* Banana cat — stationary, tilts left ↔ right, aligned to text and larger */
     .ann-banana {
-      width: clamp(80px, 10vw, 120px);
+      width: clamp(125px, 15vw, 185px);
       flex-shrink: 0;
       transform-origin: bottom center;
       animation: bananaTilt 1.8s ease-in-out infinite;
@@ -1221,7 +1221,7 @@
      1. HERO
 ══════════════════════════════════════ -->
   <section id="hero">
-    <img src="assets/space2_1.png" alt="" class="hero-bg-img" onerror="console.error('Image failed:', this.src)" />
+    <img src="assets/space2_1.png" alt="" class="hero-bg-img" />
 
     <nav>
       <span class="nav-logo">SCINTILLA</span>
@@ -1258,7 +1258,7 @@
     <div class="spark-eyebrow">Why Scintilla?</div>
     <div class="spark-inner">
       <div class="spark-image-placeholder">
-        <img src="assets/group_photo.jpg" alt="The Spark" onerror="console.error('Image failed:', this.src)" />
+        <img src="assets/group_photo.jpg" alt="The Spark" />
       </div>
       <div class="spark-body">
         Scintilla means "spark," but to us, it is far more than just a word. It is the ember of inspiration that catches
@@ -1326,44 +1326,37 @@
       <div class="publish-grid-v2">
 
         <div class="pub-cell pv2-multilingual">
-          <img src="publish/multilingual.jpg" alt="Multilingual" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/multilingual.jpg" alt="Multilingual" class="pub-cell-img" />
           <div class="pub-cell-label">MULTILINGUAL<br>EXPRESSIONS<br>(TAMIL, HINDI, ENGLISH)</div>
         </div>
 
         <div class="pub-cell pv2-poetry">
-          <img src="publish/poetry.jpg" alt="Poetry" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/poetry.jpg" alt="Poetry" class="pub-cell-img" />
           <div class="pub-cell-label">POETRY</div>
         </div>
 
         <div class="pub-cell pv2-prose">
-          <img src="publish/prose.jpg" alt="Prose" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/prose.jpg" alt="Prose" class="pub-cell-img" />
           <div class="pub-cell-label">PROSE</div>
         </div>
 
         <div class="pub-cell pv2-interviews">
-          <img src="publish/interviews.jpg" alt="Interviews" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/interviews.jpg" alt="Interviews" class="pub-cell-img" />
           <div class="pub-cell-label">INTERVIEWS</div>
         </div>
 
         <div class="pub-cell pv2-articles">
-          <img src="publish/articles.jpg" alt="Articles" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/articles.jpg" alt="Articles" class="pub-cell-img" />
           <div class="pub-cell-label">ARTICLES</div>
         </div>
 
         <div class="pub-cell pv2-artworks">
-          <img src="publish/artwork.jpg" alt="Artworks" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/artwork.jpg" alt="Artworks" class="pub-cell-img" />
           <div class="pub-cell-label">ARTWORKS</div>
         </div>
 
         <div class="pub-cell pv2-capturesque">
-          <img src="publish/bestimages.jpg" alt="Capturesque" class="pub-cell-img"
-            onerror="console.error('Image failed:', this.src)" />
+          <img src="publish/bestimages.jpg" alt="Capturesque" class="pub-cell-img" />
           <div class="pub-cell-label">CAPTURESQUE — BEST IMAGES</div>
         </div>
 
@@ -1383,8 +1376,7 @@
 
     <!-- FACULTY COORDINATORS — LEFT (Saturn bleeds left) -->
     <div class="team-block-editorial">
-      <img src="assets/image-removebg-preview(3)_1.png" alt="Saturn" class="team-saturn"
-        onerror="console.error('Image failed:', this.src)" />
+      <img src="assets/image-removebg-preview(3)_1.png" alt="Saturn" class="team-saturn" />
       <div class="team-inner-editorial">
         <div class="team-label-big">FA<br>CU<br>LTY</div>
         <div style="display:flex; flex-direction:column; gap:clamp(16px,2vw,28px); padding-top:6px;">
@@ -1427,14 +1419,12 @@
         </div>
         <div class="team-label-big">EDI<br>TOR<br>IAL</div>
       </div>
-      <img src="assets/image-removebg-preview(3)_2.png" alt="Planet" class="team-planet-right"
-        onerror="console.error('Image failed:', this.src)" />
+      <img src="assets/image-removebg-preview(3)_2.png" alt="Planet" class="team-planet-right" />
     </div>
 
     <!-- DESIGN — LEFT (Saturn bleeds left) -->
     <div class="team-block-editorial">
-      <img src="assets/image-removebg-preview(3)_1.png" alt="Saturn" class="team-saturn"
-        onerror="console.error('Image failed:', this.src)" />
+      <img src="assets/image-removebg-preview(3)_1.png" alt="Saturn" class="team-saturn" />
       <div class="team-inner-editorial">
         <div class="team-label-big">DE<br>SI<br>GN</div>
         <div class="team-names">
@@ -1462,8 +1452,7 @@
         </div>
         <div class="team-label-big">LE<br>AD</div>
       </div>
-      <img src="assets/image-removebg-preview(3)_2.png" alt="Planet" class="team-planet-right"
-        onerror="console.error('Image failed:', this.src)" />
+      <img src="assets/image-removebg-preview(3)_2.png" alt="Planet" class="team-planet-right" />
     </div>
 
 
@@ -1485,12 +1474,12 @@
           was thoughtfully considered, making this debut issue not just a publication, but a milestone that set the
           foundation for everything Scintilla aims to become.
         </div>
-        <a href="#" class="prev-download"><u>Download pdf</u></a>
+        <a href="#prev-edition" class="prev-download" onclick="alert('First Edition PDF will be available for download shortly.'); return false;"><u>Download pdf</u></a>
       </div>
       <div class="prev-cover">
         <img src="assets/Screenshot_2026-03-19_at_5_21_39_PM.png" alt="Scintilla First Edition"
           class="prev-cover-actual-img"
-          onerror="console.error('Image failed:', this.src); this.nextElementSibling.style.display='block';" />
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
         <div class="prev-cover-fallback" style="display:none;">
           <div class="prev-cover-uni">SHIV NADAR<br>UNIVERSITY<br>CHENNAI<br>PRESENTS</div>
           <div class="prev-cover-name">SCINTILLA</div>
@@ -1569,8 +1558,7 @@
       </div>
 
       <div class="cta-image-block">
-        <img src="assets/image-removebg-preview(4)_1.png" alt="Lamp post" class="cta-lamp-img"
-          onerror="console.error('Image failed:', this.src)" />
+        <img src="assets/image-removebg-preview(4)_1.png" alt="Lamp post" class="cta-lamp-img" />
         <a href="scintilla_login.html" class="cta-submit-link">SUBMIT YOUR<br>WORK NOW</a>
       </div>
     </div>
@@ -1587,9 +1575,9 @@
       <br>
       <div class="footer-links-head">Links</div>
       <div>
-        <a href="#">Home</a> &nbsp;·&nbsp;
+        <a href="#hero">Home</a> &nbsp;·&nbsp;
         <a href="scintilla_login.html">Submit</a> &nbsp;·&nbsp;
-        <a href="#">First Edition</a>
+        <a href="#prev-edition">First Edition</a>
       </div>
     </div>
     <div></div>

@@ -1,15 +1,16 @@
 {
   "name": "scintilla-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
+  "description": "Backend API and integration layer for Scintilla Literary & Arts Magazine",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test",
+    "lint": "node --check server.js src/**/*.js tests/**/*.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["scintilla", "magazine", "submissions", "onedrive", "microsoft-graph"],
+  "author": "Scintilla Team",
   "license": "ISC",
-  "description": "",
   "engines": {
     "node": ">=18.0.0"
   },
