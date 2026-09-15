@@ -145,10 +145,15 @@ async function uploadFile(file, submitterName, category, title, submissionId) {
   return await withRetry(async () => {
     const fileName = buildFileName(submitterName, category, title, file.originalname);
     const catKey = category.toLowerCase().replace(/[^a-z]/g, '');
-    const folderId = categoryFolders.get(catKey);
+    let folderId = categoryFolders.get(catKey);
 
     if (!folderId) {
-      throw new Error(`Category folder not found for: ${category}`);
+      // Folder not in cache — OneDrive may have been down at startup.
+      // Look it up / create it on demand and cache for next time.
+      const folderName = category.charAt(0).toUpperCase() + category.slice(1);
+      folderId = await ensureFolder(folderName);
+      categoryFolders.set(catKey, folderId);
+      logger.info(`OneDrive folder resolved on demand: ${category}`, { folderId });
     }
 
     let uploadedItem;

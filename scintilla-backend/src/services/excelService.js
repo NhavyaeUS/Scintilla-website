@@ -5,7 +5,8 @@
  * stored in OneDrive.
  * 
  * The workbook must have a table named "Submissions" in "Sheet1"
- * with columns: Name, Email, Course, Year, Category, Title, Description, FileLink, Timestamp
+ * with columns in this exact order:
+ * SubmissionID, Timestamp, Name, Email, Course, Year, Category, Title, Description, FileLink  (10 columns)
  */
 const logger = require('../utils/logger');
 const { withRetry } = require('../utils/retry');

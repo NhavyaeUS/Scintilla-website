@@ -42,7 +42,9 @@ const corsOptions = {
       cb(null, true);
     } else {
       logger.warn("CORS rejection", { origin });
-      cb(new Error("Not allowed by CORS"));
+      const err = new Error("Not allowed by CORS");
+      err.status = 403;
+      cb(err);
     }
   },
   methods: ["GET", "POST"],

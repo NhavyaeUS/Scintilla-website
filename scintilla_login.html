@@ -428,9 +428,11 @@
       const authData = {
         name: displayName,
         email: email,
+        // Save the access token so submit.html can send it to the backend for server-side verification
+        accessToken: response.accessToken,
         timestamp: Date.now(),
-        // Token expiry — session valid for 2 hours
-        expiresAt: Date.now() + (2 * 60 * 60 * 1000),
+        // Token expiry — sync to the actual MSAL token expiry if available, else default to 1 hour
+        expiresAt: response.expiresOn ? response.expiresOn.getTime() : Date.now() + (60 * 60 * 1000),
       };
       sessionStorage.setItem('scintilla_auth', JSON.stringify(authData));
 

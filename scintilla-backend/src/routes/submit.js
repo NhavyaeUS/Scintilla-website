@@ -4,6 +4,7 @@ const path = require('path');
 const multer = require('multer');
 const { validateSubmission } = require('../middleware/validate');
 const { submitLimiter } = require('../middleware/rateLimiter');
+const { requireAuth } = require('../middleware/auth');
 const submissionController = require('../controllers/submissionController');
 const logger = require('../utils/logger');
 
@@ -57,7 +58,7 @@ const uploadMiddleware = (req, res, next) => {
   });
 };
 
-router.post('/', submitLimiter, uploadMiddleware, validateSubmission, submissionController.handleSubmission);
+router.post('/', submitLimiter, requireAuth, uploadMiddleware, validateSubmission, submissionController.handleSubmission);
 
 module.exports = router;
 

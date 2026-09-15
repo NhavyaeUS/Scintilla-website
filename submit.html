@@ -738,8 +738,14 @@
       const API_BASE = isLocal && window.location.port !== '3000'
         ? 'http://localhost:3000'
         : window.location.origin;
+
+      // Read the MSAL access token stored at login — required for server-side auth verification
+      const authSession = JSON.parse(sessionStorage.getItem('scintilla_auth') || '{}');
+      const accessToken = authSession.accessToken || '';
+
       const resp = await fetch(`${API_BASE}/api/v1/submit`, {
         method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}` },
         body: formData
       });
       

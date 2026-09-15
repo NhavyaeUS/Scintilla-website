@@ -30,7 +30,10 @@ function sanitizeErrorMessage(err) {
 async function handleSubmission(req, res) {
   try {
     const totalSize = req.headers['content-length'];
-    const { name, email, course, year } = req.body;
+    // Use verified identity from JWT (req.user set by requireAuth middleware),
+    // NOT from req.body — prevents anyone from spoofing name/email in the POST body
+    const { name, email } = req.user;
+    const { course, year } = req.body;
     const submissions = req.submissionsParsed;
     const files = req.files;
 
