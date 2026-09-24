@@ -366,7 +366,9 @@
         redirectUri: window.location.origin + '/scintilla_login.html',
       },
       cache: {
-        cacheLocation: 'sessionStorage',
+        // localStorage keeps MSAL's token cache alive across tab closes and browser restarts,
+        // which is required for acquireTokenSilent() to work on submit.html.
+        cacheLocation: 'localStorage',
         storeAuthStateInCookie: false,
       },
     };
@@ -424,17 +426,18 @@
         return;
       }
 
-      // Store authenticated user info securely in sessionStorage
+      // Store authenticated user info in localStorage (persists across tab closes)
       const authData = {
         name: displayName,
         email: email,
-        // Save the access token so submit.html can send it to the backend for server-side verification
-        accessToken: response.accessToken,
+        // Save the ID token so submit.html can send it to the backend for server-side identity verification.
+        // idToken is the correct token for proving who the user is (accessToken is for calling MS APIs).
+        accessToken: response.idToken,
         timestamp: Date.now(),
         // Token expiry — sync to the actual MSAL token expiry if available, else default to 1 hour
         expiresAt: response.expiresOn ? response.expiresOn.getTime() : Date.now() + (60 * 60 * 1000),
       };
-      sessionStorage.setItem('scintilla_auth', JSON.stringify(authData));
+      localStorage.setItem('scintilla_auth', JSON.stringify(authData));
 
       showStatus('success', `Welcome, ${escapeHtml(displayName)}! Redirecting to submission portal...`);
 
@@ -508,7 +511,7 @@
     // ═══════════════════════════════════════════════════════════
     (function checkExistingAuth() {
       try {
-        const stored = sessionStorage.getItem('scintilla_auth');
+        const stored = localStorage.getItem('scintilla_auth');
         if (stored) {
           const auth = JSON.parse(stored);
           if (auth.expiresAt && auth.expiresAt > Date.now() && auth.email && auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
@@ -516,7 +519,7 @@
             setTimeout(() => { window.location.href = 'submit.html'; }, 800);
           } else {
             // Expired or invalid — clear it
-            sessionStorage.removeItem('scintilla_auth');
+            localStorage.removeItem('scintilla_auth');
           }
         }
       } catch (e) { /* ignore parse errors */ }

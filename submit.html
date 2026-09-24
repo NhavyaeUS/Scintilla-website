@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Khand:wght@400;500;600;700&family=Hind:wght@300;400;500;600&family=Fragment+Mono:ital@0;1&family=Martian+Mono:wght@300;400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<!-- MSAL.js — needed for silent token refresh without a login popup -->
+<script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -500,19 +502,94 @@
 </footer>
 
 <script>
-  // ── Authentication check (MSAL.js auth guard) ──
+  // ── Authentication check ──
   const ALLOWED_DOMAIN = 'snuchennai.edu.in';
-  
+
+  // ── MSAL config (same as scintilla_login.html — must stay in sync) ──
+  // Used only for acquireTokenSilent(); no login popup is ever shown from this page.
+  const _msalConfig = {
+    auth: {
+      clientId: 'a70575c0-d17b-438a-b8cc-8341626ee44d',
+      authority: 'https://login.microsoftonline.com/5beb351c-3fb8-418f-b612-fe36ace96ef3',
+      redirectUri: window.location.origin + '/scintilla_login.html',
+    },
+    cache: {
+      // Must match scintilla_login.html — localStorage so MSAL finds the cached account
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: false,
+    },
+  };
+
+  /**
+   * Silently get a fresh idToken from Microsoft without showing a popup.
+   * Uses MSAL's cached session — works as long as the user's Microsoft
+   * session is still active (typically days/weeks).
+   *
+   * Returns the fresh idToken string, or null if the session is fully expired.
+   * On failure, clears local auth data and redirects to login.
+   */
+  async function refreshTokenSilently() {
+    try {
+      let msalInstance;
+      if (typeof msal !== 'undefined') {
+        msalInstance = new msal.PublicClientApplication(_msalConfig);
+        if (typeof msalInstance.initialize === 'function') {
+          await msalInstance.initialize();
+        }
+      } else {
+        // MSAL failed to load (no network) — fall back to stored token
+        const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+        return stored.accessToken || null;
+      }
+
+      // Find the cached account MSAL knows about
+      const accounts = msalInstance.getAllAccounts();
+      if (!accounts || accounts.length === 0) {
+        // No account in cache — session fully lost, send to login
+        localStorage.removeItem('scintilla_auth');
+        window.location.href = 'scintilla_login.html';
+        return null;
+      }
+
+      // Request a fresh token silently — no popup shown to the user
+      const silentResult = await msalInstance.acquireTokenSilent({
+        scopes: ['User.Read'],
+        account: accounts[0],
+      });
+
+      // Update stored auth with the fresh token and new expiry
+      const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+      stored.accessToken = silentResult.idToken;
+      stored.expiresAt = silentResult.expiresOn
+        ? silentResult.expiresOn.getTime()
+        : Date.now() + (60 * 60 * 1000);
+      localStorage.setItem('scintilla_auth', JSON.stringify(stored));
+
+      return silentResult.idToken;
+    } catch (err) {
+      console.warn('Silent token refresh failed:', err);
+      // If interaction is required (session truly expired), redirect to login
+      if (err.name === 'InteractionRequiredAuthError' || err.errorCode === 'interaction_required') {
+        localStorage.removeItem('scintilla_auth');
+        window.location.href = 'scintilla_login.html';
+        return null;
+      }
+      // For other errors (network blip etc), fall back to the stored token
+      const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+      return stored.accessToken || null;
+    }
+  }
+
   function checkAuth() {
     try {
-      const stored = sessionStorage.getItem('scintilla_auth');
+      const stored = localStorage.getItem('scintilla_auth');
       if (!stored) {
         window.location.href = 'scintilla_login.html';
         return false;
       }
       const auth = JSON.parse(stored);
       if (!auth.expiresAt || auth.expiresAt < Date.now() || !auth.email || !auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
-        sessionStorage.removeItem('scintilla_auth');
+        localStorage.removeItem('scintilla_auth');
         window.location.href = 'scintilla_login.html';
         return false;
       }
@@ -538,14 +615,14 @@
       }
       return true;
     } catch (e) {
-      sessionStorage.removeItem('scintilla_auth');
+      localStorage.removeItem('scintilla_auth');
       window.location.href = 'scintilla_login.html';
       return false;
     }
   }
 
   function logout() {
-    sessionStorage.removeItem('scintilla_auth');
+    localStorage.removeItem('scintilla_auth');
     window.location.href = 'scintilla_login.html';
   }
 
@@ -733,15 +810,16 @@
     });
 
     try {
+      // Silently get a fresh idToken before submitting — no popup shown to the user.
+      // Falls back to stored token if MSAL network call fails (e.g. offline).
+      const accessToken = await refreshTokenSilently();
+      if (!accessToken) return; // redirected to login by refreshTokenSilently()
+
       // Resolve API base URL: localhost:3000 in dev, or current origin in production
       const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       const API_BASE = isLocal && window.location.port !== '3000'
         ? 'http://localhost:3000'
         : window.location.origin;
-
-      // Read the MSAL access token stored at login — required for server-side auth verification
-      const authSession = JSON.parse(sessionStorage.getItem('scintilla_auth') || '{}');
-      const accessToken = authSession.accessToken || '';
 
       const resp = await fetch(`${API_BASE}/api/v1/submit`, {
         method: 'POST',
