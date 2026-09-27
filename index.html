@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Scintilla — The student-run literary and arts magazine of Shiv Nadar University Chennai. Igniting minds, illuminating ideas." />
+  <meta name="description"
+    content="Scintilla — The student-run literary and arts magazine of Shiv Nadar University Chennai. Igniting minds, illuminating ideas." />
   <title>Scintilla — Igniting Minds. Illuminating Ideas.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,6 +14,9 @@
     rel="stylesheet" />
   <link
     href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Space+Mono:wght@400;700&family=Caveat:wght@600;700&display=swap"
     rel="stylesheet" />
   <style>
     /* ─── RESET ─── */
@@ -37,6 +41,12 @@
       --teal: #3A7D8C;
       --white: #FFFFFF;
       --gray: #D9D9D9;
+      --citrus: #FFA62B;
+      --sea: #86C5FF;
+      --amalfi: #2E5AA7;
+      --paper: #FFFDF5;
+      --ink: #14264d;
+      --spk-bg: var(--cream);
       --mono: 'Fragment Mono', monospace;
       --heading: 'Khand', sans-serif;
       --sub: 'Hind', sans-serif;
@@ -44,7 +54,7 @@
       --section: 'Oswald', sans-serif;
       /* responsive padding — sections bleed to edges, content indented */
       --px: clamp(24px, 5vw, 96px);
-      --py: clamp(36px, 5vw, 72px);
+      --py: clamp(24px, 3.5vw, 46px);
     }
 
     html {
@@ -228,64 +238,333 @@
     }
 
     /* ── Global clickable-element cursor ── */
-    a, a *, button, button *, [role="button"], [role="button"] *, label[for],
-    .pub-cell, .pub-cell *, .ann-closed, .ann-closed *, .prev-download, .cta-submit-link,
-    .st-tab, .st-tab *, .st-slip, .st-slip *, nav a, footer a {
+    a,
+    a *,
+    button,
+    button *,
+    [role="button"],
+    [role="button"] *,
+    label[for],
+    .pub-cell,
+    .pub-cell *,
+    .ann-closed,
+    .ann-closed *,
+    .prev-download,
+    .cta-submit-link,
+    .st-tab,
+    .st-tab *,
+    .st-slip,
+    .st-slip *,
+    .pe-cta,
+    .pe-cta *,
+    nav a,
+    footer a {
       cursor: url('Group 26.svg') 8 2, pointer !important;
     }
 
     /* ════════════════════════════════
-   2. THE SPARK
-════════════════════════════════ */
-    #spark {
-      background: var(--cream);
-      padding: var(--py) var(--px);
-      width: 100%;
-    }
-
-    .spark-title {
-      font-family: var(--section);
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 700;
-      line-height: 1.1;
-    }
-
-    .spark-eyebrow {
-      font-family: var(--section);
-      font-size: clamp(11px, 1vw, 13px);
-      color: #888;
-      margin-top: 5px;
-      font-weight: 400;
-      letter-spacing: 1px;
-    }
-
-    .spark-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(28px, 5vw, 80px);
-      margin-top: clamp(24px, 3vw, 48px);
-      align-items: center;
-    }
-
-    .spark-image-placeholder {
-      background: var(--gray);
-      aspect-ratio: 4/3;
-      width: 100%;
+       SHARED REVEAL & ACCENT STYLES
+    ════════════════════════════════ */
+    .sec {
+      position: relative;
       overflow: hidden;
+      padding: clamp(36px, 4.5vw, 60px) var(--px);
     }
 
-    .spark-image-placeholder img {
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms),
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms);
+    }
+
+    [data-reveal].vis {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hl {
+      --c: var(--citrus);
+      background-image: linear-gradient(var(--c) 0 0);
+      background-repeat: no-repeat;
+      background-size: 0% 78%;
+      background-position: 0 88%;
+      transition: background-size 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms);
+      padding: 0 0.18em;
+      border-radius: 2px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .hl.vis,
+    [data-reveal].vis .hl {
+      background-size: 100% 78%;
+    }
+
+    .scribble {
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .scribble::after {
+      content: "";
+      position: absolute;
+      left: -2%;
+      right: -2%;
+      bottom: -0.08em;
+      height: 0.5em;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20'%3E%3Cpath d='M2 12 Q30 2 60 12 T118 12 T176 12 T198 8' stroke='%232E5AA7' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x;
+      background-size: 120px 100%;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+    }
+
+    .scribble.vis::after,
+    [data-reveal].vis .scribble::after {
+      transform: scaleX(1);
+    }
+
+    /* Decorative stars */
+    .star {
+      position: absolute;
+      width: clamp(20px, 3vw, 34px);
+      opacity: 0.85;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+      animation: twinkle 3.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: 0.55;
+        transform: scale(0.9) rotate(var(--r, 0deg));
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.08) rotate(var(--r, 0deg));
+      }
+    }
+
+    .star-fallback {
+      background: var(--citrus);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+
+    /* ════════════════════════════════
+       2. THE SPARK
+    ════════════════════════════════ */
+    .spk {
+      --bg: var(--cream);
+      background:
+        radial-gradient(3px 3px at 12% 20%, #2E5AA733 60%, transparent 62%),
+        radial-gradient(3px 3px at 85% 65%, #FFA62B44 60%, transparent 62%),
+        radial-gradient(2px 2px at 60% 85%, #2E5AA722 60%, transparent 62%),
+        var(--bg);
+      color: var(--ink);
+      font-family: "Space Mono", ui-monospace, monospace;
       width: 100%;
-      height: 100%;
+    }
+
+    .spk-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--paper);
+      border: 1px solid #14264d22;
+      border-radius: 99px;
+      padding: 6px 16px 6px 6px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      margin-bottom: 38px;
+      position: relative;
+    }
+
+    .spk-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
       object-fit: cover;
+      background: var(--sea);
+      position: relative;
+      z-index: 1;
+    }
+
+    .spk-tag::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 38px;
+      height: 38px;
+      border: 1.5px dashed var(--amalfi);
+      border-radius: 50%;
+      animation: spin 14s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .img-fallback .spk-avatar {
+      display: none;
+    }
+
+    .img-fallback .spk-avatar-ph {
+      display: flex;
+    }
+
+    .spk-avatar-ph {
+      display: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--sea);
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .spk-grid {
+      display: grid;
+      grid-template-columns: clamp(320px, 34vw, 480px) 1fr;
+      gap: clamp(32px, 5vw, 68px);
+      align-items: center;
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+
+    .spk-photo {
+      margin: 0;
+      position: relative;
+      transform: rotate(-3deg);
+      max-width: 100%;
+    }
+
+    .spk-photo img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 8px solid var(--paper);
+      box-shadow: 0 16px 32px -10px rgba(20, 38, 77, 0.35);
       display: block;
     }
 
-    .spark-body {
-      font-family: var(--mono);
-      font-size: clamp(13px, 1.15vw, 15px);
-      line-height: 1.95;
+    .img-fallback .spk-photo img {
+      display: none;
+    }
+
+    .spk-photo.img-fallback {
+      aspect-ratio: 4/5;
+      background: linear-gradient(135deg, var(--sea), var(--amalfi));
+      border-radius: 10px;
+    }
+
+    .spk-copy {
+      position: relative;
+      width: 100%;
+    }
+
+    .spk-hand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .spk-hand {
+      font-family: "Caveat", cursive;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--amalfi);
+    }
+
+    .spk-arrow {
+      width: 50px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .spk-arrow path {
+      stroke: var(--amalfi);
+      stroke-width: 2.4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .spk-heading {
+      font-family: "Anton", Impact, sans-serif;
+      font-weight: 400;
+      line-height: 1;
+      margin: 0 0 24px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: clamp(2.6rem, 6.2vw, 5.2rem);
+      display: flex;
+      gap: 0.28em;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .spk-heading .outline {
+      -webkit-text-stroke: 2.5px var(--amalfi);
+      color: transparent;
+    }
+
+    .spk-heading .fill {
+      color: var(--citrus);
+    }
+
+    .spk-copy p {
+      max-width: 100%;
+      font-size: 1.02rem;
+      line-height: 1.78;
+      margin: 0 0 20px;
       text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .spk-lead {
+      font-family: "Fraunces", serif;
+      font-weight: 600;
+      font-size: clamp(1.25rem, 2.6vw, 1.6rem) !important;
+      line-height: 1.4 !important;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .hl-citrus {
+      --c: var(--citrus);
+    }
+
+    .hl-sea {
+      --c: var(--sea);
+    }
+
+    .spk-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      background: var(--paper);
+      border: 1px dashed var(--amalfi);
+      border-radius: 99px;
+      padding: 9px 18px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .spk-chip::before {
+      content: "✦";
+      color: var(--citrus);
     }
 
     /* ════════════════════════════════
@@ -293,7 +572,7 @@
 ════════════════════════════════ */
     #publish {
       background: var(--cream);
-      padding: var(--py) var(--px);
+      padding: clamp(36px, 4.5vw, 60px) var(--px);
       width: 100%;
     }
 
@@ -419,197 +698,536 @@
     /* ════════════════════════════════
    4. OUR TEAM (scoped: .st-)
 ════════════════════════════════ */
-    .st-team{
-      --ink:#14264d; --paper:#FFFDF5; --step:clamp(18px,9vw,170px); --tabh:46px;
-      position:relative; padding:clamp(56px,9vw,120px) clamp(16px,5vw,64px);
+    .st-team {
+      --ink: #14264d;
+      --paper: #FFFDF5;
+      --step: clamp(20px, 9vw, 180px);
+      --tabh: 52px;
+      position: relative;
+      z-index: 3;
+      padding: clamp(36px, 4.5vw, 60px) var(--px);
       background:
-        radial-gradient(5px 4px at 8% 14%,#FFA62B55 60%,transparent 62%),
-        radial-gradient(4px 3px at 22% 70%,#2E5AA744 60%,transparent 62%),
-        radial-gradient(6px 4px at 37% 28%,#86C5FF77 60%,transparent 62%),
-        radial-gradient(4px 4px at 55% 88%,#FFA62B44 60%,transparent 62%),
-        radial-gradient(5px 3px at 68% 18%,#2E5AA733 60%,transparent 62%),
-        radial-gradient(6px 5px at 83% 62%,#86C5FF66 60%,transparent 62%),
-        radial-gradient(4px 3px at 93% 12%,#FFA62B55 60%,transparent 62%),
-        radial-gradient(5px 4px at 47% 50%,#2E5AA722 60%,transparent 62%),
+        radial-gradient(5px 4px at 8% 14%, #FFA62B55 60%, transparent 62%),
+        radial-gradient(4px 3px at 22% 70%, #2E5AA744 60%, transparent 62%),
+        radial-gradient(6px 4px at 37% 28%, #86C5FF77 60%, transparent 62%),
+        radial-gradient(4px 4px at 55% 88%, #FFA62B44 60%, transparent 62%),
+        radial-gradient(5px 3px at 68% 18%, #2E5AA733 60%, transparent 62%),
+        radial-gradient(6px 5px at 83% 62%, #86C5FF66 60%, transparent 62%),
+        radial-gradient(4px 3px at 93% 12%, #FFA62B55 60%, transparent 62%),
+        radial-gradient(5px 4px at 47% 50%, #2E5AA722 60%, transparent 62%),
         var(--cream);
-      color:var(--ink); font-family:"DM Mono",ui-monospace,monospace; overflow:hidden;
+      color: var(--ink);
+      font-family: "DM Mono", ui-monospace, monospace;
     }
-    .st-head{max-width:1120px;margin:0 auto clamp(28px,5vw,56px)}
+
+    .st-head {
+      max-width: 1360px;
+      margin: 0 auto clamp(18px, 3vw, 28px);
+    }
+
     /* Size synced with .publish-title / .prev-title / .spark-title across the page */
-    .st-head h2{font-family:var(--section);font-size:clamp(24px,3.6vw,46px);font-weight:700;margin:0;letter-spacing:.01em;text-transform:uppercase}
-    .st-head p{margin:14px 0 0;max-width:46ch;font-size:.9rem;line-height:1.6;color:#14264dcc}
-
-    .st-stack{max-width:1120px;margin:0 auto}
-    .st-folder{position:relative;margin-top:calc(var(--tabh) * -1);--c:#FFA62B;--hv:#86C5FF;--tx:#14264d;transition:transform .55s cubic-bezier(.22,1,.36,1)}
-    .st-folder.lift{transform:translateY(-6px)}
-    .st-folder.lift:not(:last-child) .st-body{box-shadow:0 8px 0 var(--c),0 -6px 16px #14264d26,inset 0 2px 0 #fff6}
-    .st-folder:first-child{margin-top:0}
-    .st-tabrow{height:var(--tabh);display:flex;align-items:flex-end;pointer-events:none;
-      padding-left:calc(var(--i) * var(--step) + 26px)}
-    .st-tab{
-      pointer-events:auto;position:relative;height:var(--tabh);padding:0 clamp(14px,3vw,30px);
-      border:0;border-radius:18px 18px 0 0;background:var(--c);color:var(--tx);cursor:pointer;
-      font:500 clamp(.78rem,2.4vw,.95rem) "DM Mono",monospace;letter-spacing:.02em;
-      display:flex;align-items:center;gap:10px;white-space:nowrap;
-      transition:transform .5s cubic-bezier(.22,1,.36,1);
-    }
-    .st-tab::before,.st-tab::after{content:"";position:absolute;bottom:0;width:18px;height:18px;pointer-events:none}
-    .st-tab::before{left:-18px;background:radial-gradient(circle at 0 0,transparent 17.5px,var(--c) 18px)}
-    .st-tab::after{right:-18px;background:radial-gradient(circle at 100% 0,transparent 17.5px,var(--c) 18px)}
-    .st-tab i{font-style:normal;font-size:.72rem;background:var(--tx);color:var(--c);border-radius:99px;padding:2px 8px;
-      transition:transform .5s cubic-bezier(.22,1,.36,1)}
-    .st-tab:hover i{transform:scale(1.1)}
-    .st-tab:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-    .st-hit{position:absolute;left:0;right:0;top:100%;height:10px}
-
-    .st-body{background:var(--c);border-radius:22px 22px 0 0;box-shadow:0 -6px 16px #14264d26,inset 0 2px 0 #fff6;position:relative}
-    .st-folder:last-child .st-body{border-radius:22px}
-    .st-lip{height:var(--tabh)}
-    .st-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .65s cubic-bezier(.65,0,.2,1)}
-    .st-folder.open .st-panel{grid-template-rows:1fr}
-    .st-inner{min-height:0;overflow:hidden}
-    .st-content{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:clamp(20px,4vw,56px);
-      padding:0 clamp(18px,4vw,48px) calc(var(--tabh) + 34px);color:var(--tx);
-      opacity:0;transition:opacity .3s}
-    .st-folder.open .st-content{opacity:1;transition-delay:.15s}
-
-    .st-label{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
-    .st-label h3{margin:0;font:400 clamp(3rem,8vw,6.2rem)/.88 Anton,Impact,sans-serif;text-transform:uppercase}
-    .st-label h3 span{display:block}
-    .st-label small{font-size:.8rem;line-height:1.55;max-width:24ch}.st-label small strong{font-weight:500;background:var(--tx);color:var(--c);padding:1px 9px;border-radius:99px;display:inline-block;margin-bottom:8px}
-    .st-planet{width:clamp(80px,11vw,140px);height:auto;margin-top:auto;pointer-events:none;filter:drop-shadow(4px 6px 0 #14264d33)}
-    .st-folder.open .st-planet{animation:st-drift 1.1s cubic-bezier(.2,.9,.3,1) backwards .25s}
-    @keyframes st-drift{from{opacity:0;transform:translate(-30px,20px) rotate(-25deg) scale(.6)}}
-
-    .st-list{list-style:none;margin:0;padding:0;display:grid;gap:14px;align-content:start;
-      grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-    .st-folder.open .st-slip{animation:st-rise .55s cubic-bezier(.2,.9,.3,1.2) backwards;animation-delay:calc(var(--n) * 45ms + .25s)}
-    @keyframes st-rise{from{opacity:0;transform:translateY(22px) rotate(2deg)}}
-    .st-slip{
-      position:relative;overflow:hidden;isolation:isolate;background:var(--paper);color:var(--ink);border-radius:6px 16px 6px 16px;
-      padding:16px 18px 16px 24px;display:flex;flex-direction:column;gap:8px;box-shadow:3px 3px 0 var(--ink);
-      transition:transform .55s cubic-bezier(.22,1,.36,1),box-shadow .55s cubic-bezier(.22,1,.36,1);
-    }
-    .st-slip::after{content:"";position:absolute;inset:0;z-index:-1;background:var(--hv);transform:scaleX(0);transform-origin:left center;
-      transition:transform .6s cubic-bezier(.22,1,.36,1)}
-    .st-slip::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c);z-index:0;
-      transition:opacity .4s ease}
-    .st-nm{font:600 1.15rem/1.2 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.01em;position:relative;z-index:1}
-    .st-meta{font-size:.74rem;line-height:1.5;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;position:relative;z-index:1}
-    .st-meta b{font-weight:500;background:var(--ink);color:var(--paper);padding:1px 9px;border-radius:99px;
-      transition:background .45s ease,color .45s ease}
-    .st-slip:hover,.st-slip:focus-within{transform:translateY(-4px) rotate(-.6deg);box-shadow:5px 7px 0 var(--ink)}
-    .st-slip:nth-child(even):hover{transform:translateY(-4px) rotate(.6deg)}
-    .st-slip:hover::after,.st-slip:focus-within::after{transform:scaleX(1)}
-    .st-slip:hover::before{opacity:0}
-    .st-slip:hover .st-meta b{background:var(--paper);color:var(--ink)}
-    .st-slip.faculty{padding:22px 22px 22px 28px}
-    .st-slip.faculty .st-nm{font-size:1.5rem}
-
-    @media (max-width:760px){
-      .st-content{grid-template-columns:1fr}
-      .st-label{flex-direction:row;align-items:flex-end;flex-wrap:wrap;gap:6px 18px}
-      .st-label h3 span{display:inline}
-      .st-planet{margin:0 0 0 auto}
-      .st-list{grid-template-columns:1fr}
-    }
-    @media (prefers-reduced-motion:reduce){
-      .st-team *,.st-team *::before{animation:none!important;transition-duration:.01s!important;transition-delay:0s!important}
-    }
-
-    /* ════════════════════════════════
-   5. PREVIOUS EDITION
-════════════════════════════════ */
-    #prev-edition {
-      background: var(--cream);
-      padding: var(--py) var(--px);
-      width: 100%;
-    }
-
-    .prev-header {
-      text-align: right;
-      margin-bottom: clamp(24px, 3vw, 48px);
-    }
-
-    .prev-title {
+    .st-head h2 {
       font-family: var(--section);
       font-size: clamp(24px, 3.6vw, 46px);
       font-weight: 700;
+      margin: 0;
+      letter-spacing: .01em;
+      text-transform: uppercase;
     }
 
-    .prev-inner {
-      display: grid;
-      grid-template-columns: 1fr clamp(200px, 20vw, 290px);
-      gap: clamp(32px, 5vw, 80px);
-      align-items: start;
+    .st-head p {
+      margin: 12px 0 0;
+      max-width: 100%;
+      white-space: nowrap;
+      font-size: clamp(.82rem, 1.35vw, .92rem);
+      line-height: 1.6;
+      color: #14264dcc;
     }
 
-    .prev-body {
-      font-family: var(--mono);
-      font-size: clamp(13px, 1.1vw, 15px);
-      line-height: 1.95;
-      text-align: justify;
+    .st-stack {
+      max-width: 1360px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
     }
 
-    .prev-download {
-      display: inline-block;
-      margin-top: 26px;
-      font-family: var(--mono);
-      font-size: clamp(13px, 1.1vw, 15px);
-      color: var(--dark);
-      text-decoration: underline;
-      font-style: italic;
+    .st-folder {
+      position: relative;
+      margin-top: calc(var(--tabh) * -1 - 38px);
+      --c: #FFA62B;
+      --hv: #86C5FF;
+      --tx: #14264d;
+      pointer-events: none;
+      transition: transform .25s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .st-folder.lift,
+    .st-folder:hover {
+      transform: translateY(-5px);
+    }
+
+    .st-folder.lift:not(:last-child) .st-body,
+    .st-folder:hover:not(:last-child) .st-body {
+      box-shadow: 0 -8px 20px #14264d26, inset 0 2px 0 #fff6;
+    }
+
+    .st-folder:first-child {
+      margin-top: 0;
+    }
+
+    .st-tabrow {
+      height: var(--tabh);
+      display: flex;
+      align-items: flex-end;
+      pointer-events: none;
+      padding-left: calc(var(--i) * var(--step) + 26px);
+    }
+
+    .st-tab {
+      pointer-events: auto;
+      position: relative;
+      height: var(--tabh);
+      padding: 0 clamp(22px, 3.5vw, 46px);
+      border: 0;
+      border-radius: 20px 20px 0 0;
+      background: var(--c);
+      color: var(--tx);
+      cursor: pointer;
+      font: 600 clamp(.82rem, 1.6vw, 1rem) "DM Mono", monospace;
+      letter-spacing: .04em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+      min-width: clamp(120px, 14vw, 200px);
+      transition: transform .25s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .st-tab::before,
+    .st-tab::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 18px;
+      height: 18px;
+      pointer-events: none
+    }
+
+    .st-tab::before {
+      left: -18px;
+      background: radial-gradient(circle at 0 0, transparent 17.5px, var(--c) 18px)
+    }
+
+    .st-tab::after {
+      right: -18px;
+      background: radial-gradient(circle at 100% 0, transparent 17.5px, var(--c) 18px)
+    }
+
+    .st-tab i {
+      font-style: normal;
+      font-size: .72rem;
+      background: var(--tx);
+      color: var(--c);
+      border-radius: 99px;
+      padding: 2px 8px;
+      transition: transform .25s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    .st-tab:hover i {
+      transform: scale(1.1)
+    }
+
+    .st-tab:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px
+    }
+
+    .st-hit {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 10px
+    }
+
+    .st-body {
+      pointer-events: auto;
+      background: var(--c);
+      border-radius: 22px 22px 0 0;
+      box-shadow: 0 -6px 16px #14264d26, inset 0 2px 0 #fff6;
+      position: relative;
+      padding-bottom: clamp(16px, 1.8vw, 22px);
+    }
+
+    .st-folder:last-child .st-body {
+      border-radius: 22px;
+      padding-bottom: clamp(30px, 3.8vw, 48px);
+    }
+
+    .st-lip {
+      height: clamp(54px, 6.5vw, 76px);
       cursor: pointer;
     }
 
-    .prev-cover {
-      width: 100%;
-      border-radius: 10px;
+    .st-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .65s cubic-bezier(.65, 0, .2, 1);
+    }
+
+    .st-folder.open .st-panel {
+      grid-template-rows: 1fr;
+    }
+
+    .st-inner {
+      min-height: 0;
       overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-      background: #0d1b3e;
-      aspect-ratio: 3/4;
+    }
+
+    .st-content {
+      display: grid;
+      grid-template-columns: minmax(190px, clamp(210px, 20vw, 300px)) 1fr;
+      gap: clamp(20px, 3.5vw, 48px);
+      padding: 0 clamp(18px, 3.5vw, 44px) calc(var(--tabh) + 22px);
+      color: var(--tx);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .st-folder:last-child .st-content {
+      padding-bottom: clamp(14px, 2vw, 24px);
+    }
+
+    .st-folder.open .st-content {
+      opacity: 1;
+      transition-delay: .15s;
+    }
+
+    .st-label {
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      position: sticky;
+      top: 16px;
+      align-self: start;
     }
 
-    .prev-cover-actual-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .st-label h3 {
+      margin: 0;
+      font: 400 clamp(3.0rem, 6.2vw, 4.8rem)/.88 Anton, Impact, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+
+    /* Stacked syllable spans */
+    .st-label h3 span {
       display: block;
-      border-radius: 10px;
+      white-space: nowrap;
     }
 
-    .prev-cover-fallback {
-      text-align: center;
-      padding: 20px;
-      color: var(--white);
+    .st-note {
+      font-size: clamp(0.78rem, 0.88vw, 0.86rem);
+      line-height: 1.5;
+      max-width: 22ch;
+      margin: 8px 0 0;
+      opacity: 0.88;
     }
 
-    .prev-cover-uni {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 2px;
-      opacity: 0.8;
-      line-height: 1.6;
+    /* Planet removed from layout — display:none so it takes no space */
+    .st-planet {
+      display: none;
     }
 
-    .prev-cover-name {
-      font-family: var(--heading);
-      font-size: 40px;
+    .st-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    }
+
+    .st-folder.open .st-slip {
+      animation: st-rise .55s cubic-bezier(.2, .9, .3, 1.2) backwards;
+      animation-delay: calc(var(--n) * 45ms + .25s);
+    }
+
+    @keyframes st-rise {
+      from {
+        opacity: 0;
+        transform: translateY(22px) rotate(2deg);
+      }
+    }
+
+    .st-slip {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 6px 16px 6px 16px;
+      padding: 14px 18px 14px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform .55s cubic-bezier(.22, 1, .36, 1), box-shadow .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .st-slip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: var(--hv);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .6s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    .st-slip::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 7px;
+      background: var(--c);
+      z-index: 0;
+      transition: opacity .4s ease
+    }
+
+    .st-nm {
+      font: 600 1.15rem/1.2 "Bricolage Grotesque", system-ui, sans-serif;
+      letter-spacing: -.01em;
+      position: relative;
+      z-index: 1
+    }
+
+    .st-meta {
+      font-size: .74rem;
+      line-height: 1.5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      align-items: center;
+      position: relative;
+      z-index: 1
+    }
+
+    .st-meta b {
+      font-weight: 500;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 1px 9px;
+      border-radius: 99px;
+      transition: background .45s ease, color .45s ease
+    }
+
+    .st-slip:hover,
+    .st-slip:focus-within {
+      transform: translateY(-4px) rotate(-.6deg);
+      box-shadow: 5px 7px 0 var(--ink)
+    }
+
+    .st-slip:nth-child(even):hover {
+      transform: translateY(-4px) rotate(.6deg)
+    }
+
+    .st-slip:hover::after,
+    .st-slip:focus-within::after {
+      transform: scaleX(1)
+    }
+
+    .st-slip:hover::before {
+      opacity: 0
+    }
+
+    .st-slip:hover .st-meta b {
+      background: var(--paper);
+      color: var(--ink)
+    }
+
+    .st-slip.faculty {
+      padding: 18px 20px 18px 24px;
+    }
+
+    .st-slip.faculty .st-nm {
+      font-size: 1.35rem;
+    }
+
+    @media (max-width:760px) {
+      .st-head p {
+        white-space: normal;
+      }
+
+      .st-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .st-label {
+        flex-direction: row;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+        position: static;
+      }
+
+      .st-label h3 {
+        font-size: clamp(2.2rem, 6.5vw, 2.8rem);
+        line-height: .88;
+      }
+
+      .st-label h3 span {
+        display: inline;
+      }
+
+      .st-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      .st-team *,
+      .st-team *::before {
+        animation: none !important;
+        transition-duration: .01s !important;
+        transition-delay: 0s !important
+      }
+
+      .star,
+      .spk-tag::before {
+        animation: none !important
+      }
+
+      [data-reveal],
+      .hl,
+      .scribble::after {
+        transition-duration: .01s !important;
+        transition-delay: 0s !important
+      }
+    }
+
+    /* ════════════════════════════════
+       5. PREVIOUS EDITION
+    ════════════════════════════════ */
+    .pe {
+      background: var(--cream);
+      border-top: none;
+      border-bottom: none;
+      color: var(--ink);
+      font-family: "Space Mono", ui-monospace, monospace;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+
+    .pe-eyebrow {
+      display: none;
+    }
+
+    .pe-grid {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, 360px);
+      gap: clamp(32px, 4.5vw, 68px);
+      align-items: start;
+      max-width: 1360px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .pe-lead {
+      font-family: "Fraunces", serif;
+      font-weight: 600;
+      font-size: clamp(1.5rem, 3.4vw, 2.35rem);
+      line-height: 1.3;
+      margin: 0 0 28px;
+      max-width: 100%;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .pe-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 34px;
+    }
+
+    .pe-cols p {
+      margin: 0;
+      font-size: 0.94rem;
+      line-height: 1.75;
+      max-width: 100%;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .pe-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--citrus);
+      color: var(--ink);
+      text-decoration: none;
       font-weight: 700;
-      margin-top: 6px;
+      font-size: 0.88rem;
+      padding: 13px 24px;
+      border-radius: 99px;
+      box-shadow: 3px 4px 0 var(--ink);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .prev-cover-tag {
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 1.5px;
-      opacity: 0.7;
-      margin-top: 6px;
-      line-height: 1.6;
+    .pe-cta:hover {
+      transform: translate(-2px, -3px);
+      box-shadow: 5px 6px 0 var(--ink);
+    }
+
+    .pe-cover {
+      position: relative;
+      margin: 0;
+      transform: rotate(3deg);
+    }
+
+    .pe-cover img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 8px solid var(--paper);
+      box-shadow: 0 16px 30px -12px rgba(20, 38, 77, 0.33);
+      outline: 1px solid #14264d14;
+      display: block;
+    }
+
+    .pe-sticker {
+      position: absolute;
+      top: -14px;
+      left: -16px;
+      background: var(--sea);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 0.72rem;
+      padding: 7px 13px;
+      border-radius: 99px;
+      transform: rotate(-8deg);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .img-fallback.pe-cover img {
+      display: none;
+    }
+
+    .pe-cover.img-fallback {
+      aspect-ratio: 3/4;
+      background: linear-gradient(160deg, var(--sea), var(--amalfi) 70%);
+      border-radius: 10px;
     }
 
     /* ════════════════════════════════
@@ -627,7 +1245,7 @@
       width: 100%;
       position: relative;
       overflow: hidden;
-      border-top: clamp(16px, 2.2vw, 32px) solid var(--cream);
+      border-top: none;
       border-bottom: clamp(16px, 2.2vw, 32px) solid var(--cream);
       min-height: clamp(300px, 42vw, 560px);
       display: flex;
@@ -637,6 +1255,8 @@
     /* inner layout — text left, lamp right */
     .cta-inner {
       width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr clamp(260px, 34vw, 480px);
       align-items: center;
@@ -665,7 +1285,8 @@
       align-items: center;
       justify-content: flex-end;
       align-self: stretch;
-      position: relative; /* needed for absolute submit link */
+      position: relative;
+      /* needed for absolute submit link */
     }
 
     .cta-lamp-img {
@@ -692,8 +1313,8 @@
          not pushed to the bottom by flex */
       position: absolute;
       bottom: clamp(28px, 6vw, 72px);
-      left: 50%;
-      transform: translateX(-60%);
+      left: 33%;
+      transform: translateX(-50%);
       white-space: nowrap;
     }
 
@@ -897,29 +1518,28 @@
       }
 
       /* ── The Spark ── */
-      #spark {
-        padding: 44px var(--px);
+      .spk {
+        padding: clamp(28px, 6vw, 48px) clamp(16px, 4vw, 36px);
       }
 
-      .spark-title {
-        font-size: clamp(28px, 7vw, 40px);
-      }
-
-      .spark-inner {
+      .spk-grid {
         grid-template-columns: 1fr;
-        gap: 22px;
-        margin-top: 22px;
+        gap: 20px;
       }
 
-      .spark-image-placeholder {
-        aspect-ratio: 16/10;
-        border-radius: 4px;
+      .spk-photo {
+        max-width: 320px;
+        margin: 0 auto 20px;
       }
 
-      .spark-body {
-        text-align: left;
-        font-size: 13.5px;
-        line-height: 1.85;
+      .spk-heading {
+        font-size: clamp(2.2rem, 9vw, 3.6rem);
+      }
+
+      .spk-copy p {
+        font-size: 0.9rem;
+        text-align: justify;
+        text-justify: inter-word;
       }
 
       /* ── What We Publish ── */
@@ -973,38 +1593,23 @@
 
 
       /* ── Previous Edition ── */
-      #prev-edition {
-        padding: 44px var(--px);
+      .pe {
+        padding: clamp(28px, 6vw, 48px) clamp(16px, 4vw, 36px);
       }
 
-      .prev-header {
-        text-align: left;
-        margin-bottom: 18px;
-      }
-
-      .prev-title {
-        font-size: clamp(24px, 6vw, 32px);
-      }
-
-      .prev-inner {
+      .pe-grid {
         grid-template-columns: 1fr;
-        gap: 22px;
+        gap: 20px;
       }
 
-      .prev-body {
-        text-align: left;
-        font-size: 13.5px;
-        line-height: 1.8;
+      .pe-cover {
+        max-width: 260px;
+        margin: 0 auto;
       }
 
-      .prev-cover {
-        max-width: 220px;
-        margin: 10px auto 0;
-      }
-
-      .prev-download {
-        margin-top: 16px;
-        display: inline-block;
+      .pe-cols {
+        grid-template-columns: 1fr;
+        gap: 18px;
       }
 
       /* ── Submit CTA (Fixed: full-screen, text -> bigger lamp -> underlined button, scattered stars) ── */
@@ -1015,7 +1620,7 @@
         align-items: center;
         justify-content: center;
         padding: 50px 0;
-        border-top-width: 14px;
+        border-top: none;
         border-bottom-width: 14px;
       }
 
@@ -1103,7 +1708,7 @@
         padding: 36px 20px 24px;
       }
 
-      footer > div:nth-child(2) {
+      footer>div:nth-child(2) {
         display: none;
       }
 
@@ -1116,11 +1721,11 @@
    ANNOUNCEMENT SECTION
 ════════════════════════════════ */
     #announcement {
-      background: #f5ecd7;
-      padding: clamp(32px, 4vw, 56px) var(--px);
+      background: var(--cream);
+      padding: clamp(22px, 3vw, 42px) var(--px);
       position: relative;
       overflow: hidden;
-      min-height: 50vh;
+      min-height: clamp(280px, 34vh, 420px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1128,24 +1733,60 @@
       gap: 0;
     }
 
-    /* ── Stars — pinned to exact corners as in the reference ── */
+    /* ── Stars — comfortably inset so tips never get cut off between sections ── */
     .ann-star {
       position: absolute;
       pointer-events: none;
       user-select: none;
     }
-    /* top-left: medium, tilted left, bleeding off corner */
-    .ann-star-1 { top: -15px; left: -15px; width: clamp(70px, 9vw, 110px); transform: rotate(-25deg); }
-    /* top-right: large, tilted right, bleeding off corner */
-    .ann-star-2 { top: -25px; right: -25px; width: clamp(100px, 12vw, 150px); transform: rotate(20deg); }
-    /* bottom-left: large, bleeding off corner */
-    .ann-star-3 { bottom: -20px; left: -20px; width: clamp(90px, 11vw, 130px); transform: rotate(15deg); }
-    /* bottom-right: medium, bleeding off corner */
-    .ann-star-4 { bottom: -15px; right: -15px; width: clamp(70px, 9vw, 100px); transform: rotate(-30deg); }
+
+    /* top-left: inset safely inside so tips do not get cut */
+    .ann-star-1 {
+      top: clamp(10px, 2.2vw, 24px);
+      left: clamp(14px, 2.8vw, 32px);
+      width: clamp(55px, 7vw, 85px);
+      transform: rotate(-15deg);
+    }
+
+    /* top-right: inset safely inside so tips do not get cut */
+    .ann-star-2 {
+      top: clamp(10px, 2.2vw, 24px);
+      right: clamp(14px, 2.8vw, 32px);
+      width: clamp(70px, 8.5vw, 110px);
+      transform: rotate(18deg);
+    }
+
+    /* bottom-left: inset safely inside so tips do not get cut */
+    .ann-star-3 {
+      bottom: clamp(10px, 2.2vw, 24px);
+      left: clamp(14px, 2.8vw, 32px);
+      width: clamp(65px, 8vw, 95px);
+      transform: rotate(12deg);
+    }
+
+    /* bottom-right: inset safely inside so tips do not get cut */
+    .ann-star-4 {
+      bottom: clamp(10px, 2.2vw, 24px);
+      right: clamp(14px, 2.8vw, 32px);
+      width: clamp(55px, 7vw, 80px);
+      transform: rotate(-20deg);
+    }
+
     /* mid-left small accent */
-    .ann-star-5 { top: 42%; left: 3%; width: clamp(28px, 3vw, 42px); transform: rotate(5deg); }
+    .ann-star-5 {
+      top: 46%;
+      left: clamp(18px, 3.2vw, 42px);
+      width: clamp(24px, 2.5vw, 36px);
+      transform: rotate(5deg);
+    }
+
     /* mid-right small accent */
-    .ann-star-6 { top: 38%; right: 2%; width: clamp(24px, 2.5vw, 36px); transform: rotate(-10deg); }
+    .ann-star-6 {
+      top: 44%;
+      right: clamp(18px, 3.2vw, 42px);
+      width: clamp(22px, 2.2vw, 32px);
+      transform: rotate(-10deg);
+    }
 
 
 
@@ -1160,11 +1801,14 @@
       z-index: 2;
       transition: transform 0.3s ease;
     }
-    .ann-closed:hover { transform: translateY(-6px) scale(1.03); }
+
+    .ann-closed:hover {
+      transform: translateY(-6px) scale(1.03);
+    }
 
     .ann-closed-img {
-      width: clamp(200px, 26vw, 340px);
-      filter: drop-shadow(0 14px 36px rgba(0,0,0,0.14));
+      width: clamp(280px, 36vw, 460px);
+      filter: drop-shadow(0 14px 36px rgba(0, 0, 0, 0.14));
     }
 
     .ann-click-hint {
@@ -1175,9 +1819,19 @@
       text-transform: lowercase;
       animation: hintPulse 2.2s ease-in-out infinite;
     }
+
     @keyframes hintPulse {
-      0%, 100% { opacity: 0.45; transform: translateY(0); }
-      50%       { opacity: 1;    transform: translateY(-5px); }
+
+      0%,
+      100% {
+        opacity: 0.45;
+        transform: translateY(0);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translateY(-5px);
+      }
     }
 
     /* ── EXPANDED STATE — matches reference frame exactly ── */
@@ -1187,18 +1841,28 @@
       width: 100%;
       max-width: 890px;
     }
+
     .ann-expanded.visible {
       display: block;
       min-height: clamp(280px, 36vw, 440px);
       animation: annReveal 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
+
     /* done class: keep the same min-height — never shrink the card */
     .ann-expanded.done {
       min-height: clamp(280px, 36vw, 440px);
     }
+
     @keyframes annReveal {
-      from { opacity: 0; transform: scale(0.86) translateY(28px); }
-      to   { opacity: 1; transform: scale(1)    translateY(0); }
+      from {
+        opacity: 0;
+        transform: scale(0.86) translateY(28px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
 
     /* Envelope — centered in the frame, behind everything */
@@ -1211,12 +1875,20 @@
       opacity: 0.78;
       z-index: 0;
       pointer-events: none;
-      filter: drop-shadow(0 6px 20px rgba(0,0,0,0.09));
+      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.09));
       animation: envPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
+
     @keyframes envPop {
-      from { opacity: 0; transform: translate(-50%, -30%) rotate(0deg); }
-      to   { opacity: 0.78; transform: translate(-50%, -48%) rotate(-4deg); }
+      from {
+        opacity: 0;
+        transform: translate(-50%, -30%) rotate(0deg);
+      }
+
+      to {
+        opacity: 0.78;
+        transform: translate(-50%, -48%) rotate(-4deg);
+      }
     }
 
     /* Cartoon collage card — left, portrait, slight left-tilt, overlaps envelope */
@@ -1230,15 +1902,26 @@
       border-radius: 12px;
       overflow: hidden;
       z-index: 2;
-      box-shadow: 0 10px 32px rgba(0,0,0,0.22);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
       animation: cardLeft 0.7s 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
+
     .ann-cartoon-card img {
-      width: 100%; height: 100%; object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
+
     @keyframes cardLeft {
-      from { opacity: 0; transform: translateY(-30%) translateX(40px) rotate(0deg); }
-      to   { opacity: 1; transform: translateY(-50%) translateX(0)    rotate(-2.5deg); }
+      from {
+        opacity: 0;
+        transform: translateY(-30%) translateX(40px) rotate(0deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0) rotate(-2.5deg);
+      }
     }
 
     /* Blue wavy card — right side, contains text + banana cat */
@@ -1253,23 +1936,32 @@
       height: auto;
       background: url('assets/Rectangle.png') no-repeat center center;
       background-size: 100% 100%;
-      padding: clamp(20px, 2.5vw, 32px) clamp(24px, 3.2vw, 40px)
-               clamp(28px, 3.5vw, 42px);  /* extra bottom padding so wavy edge shows */
+      padding: clamp(20px, 2.5vw, 32px) clamp(24px, 3.2vw, 40px) clamp(28px, 3.5vw, 42px);
+      /* extra bottom padding so wavy edge shows */
       display: flex;
       align-items: flex-start;
       gap: clamp(12px, 1.6vw, 22px);
       z-index: 2;
-      filter: drop-shadow(0 10px 24px rgba(0,0,0,0.12));
+      filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.12));
       animation: cardRight 0.7s 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       overflow: visible;
     }
+
     /* Once typing done — keep min-height, don't shrink */
     .ann-expanded.done .ann-text-card {
       min-height: clamp(210px, 27vw, 310px);
     }
+
     @keyframes cardRight {
-      from { opacity: 0; transform: translateY(-35%) translateX(-40px); }
-      to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-35%) translateX(-40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+      }
     }
 
     /* Typewriter text */
@@ -1285,14 +1977,27 @@
       overflow: visible;
       align-self: flex-start;
     }
+
     .ann-typetext::after {
       content: '|';
       animation: blink 0.75s step-end infinite;
       color: #1a1a1a77;
     }
-    .ann-typetext.done::after { content: none; }
+
+    .ann-typetext.done::after {
+      content: none;
+    }
+
     @keyframes blink {
-      0%, 100% { opacity: 1; } 50% { opacity: 0; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
     }
 
     /* Banana cat — stationary, tilts left ↔ right, aligned to text and larger */
@@ -1304,10 +2009,19 @@
       align-self: flex-start;
       margin-top: 4px;
     }
+
     @keyframes bananaTilt {
-      0%   { transform: rotate(-8deg); }
-      50%  { transform: rotate(8deg);  }
-      100% { transform: rotate(-8deg); }
+      0% {
+        transform: rotate(-8deg);
+      }
+
+      50% {
+        transform: rotate(8deg);
+      }
+
+      100% {
+        transform: rotate(-8deg);
+      }
     }
 
     /* ── Mobile ── */
@@ -1321,11 +2035,35 @@
         align-items: center;
         justify-content: center;
       }
-      .ann-star-1 { width: 55px; top: -10px; left: -10px; }
-      .ann-star-2 { width: 70px; top: -12px; right: -12px; }
-      .ann-star-3 { width: 60px; bottom: -12px; left: -12px; }
-      .ann-star-4 { width: 55px; bottom: -10px; right: -10px; }
-      .ann-star-5, .ann-star-6 { display: none; }
+
+      .ann-star-1 {
+        width: 55px;
+        top: -10px;
+        left: -10px;
+      }
+
+      .ann-star-2 {
+        width: 70px;
+        top: -12px;
+        right: -12px;
+      }
+
+      .ann-star-3 {
+        width: 60px;
+        bottom: -12px;
+        left: -12px;
+      }
+
+      .ann-star-4 {
+        width: 55px;
+        bottom: -10px;
+        right: -10px;
+      }
+
+      .ann-star-5,
+      .ann-star-6 {
+        display: none;
+      }
 
       .ann-expanded.visible {
         display: flex;
@@ -1338,6 +2076,7 @@
         min-height: auto;
         margin: 0 auto;
       }
+
       .ann-env-bg {
         display: none !important;
       }
@@ -1355,6 +2094,7 @@
         animation: annCardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) both !important;
         flex-shrink: 0;
       }
+
       .ann-cartoon-card img {
         width: 100%;
         height: 100%;
@@ -1380,9 +2120,11 @@
         padding: 22px 18px 26px;
         animation: annCardSlide 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both !important;
       }
+
       .ann-expanded.done .ann-text-card {
         min-height: auto !important;
       }
+
       .ann-typetext {
         text-align: left;
         font-size: 12.5px;
@@ -1390,6 +2132,7 @@
         width: 100%;
         color: #1a1a1a;
       }
+
       .ann-banana {
         width: 80px;
         height: auto;
@@ -1398,8 +2141,15 @@
       }
 
       @keyframes annCardSlide {
-        from { opacity: 0; transform: translateY(22px) scale(0.96); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
+        from {
+          opacity: 0;
+          transform: translateY(22px) scale(0.96);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
     }
 
@@ -1432,6 +2182,148 @@
       transform: translateY(0);
     }
 
+    /* ════════════════════════════════
+       DECORATIVE SPACE ELEMENTS
+       sparkle · moon · planet · comet · orbit
+       All: pointer-events:none; aria-hidden="true"
+    ════════════════════════════════ */
+    .sparkle {
+      position: absolute;
+      width: clamp(16px, 2.6vw, 30px);
+      color: var(--citrus);
+      filter: drop-shadow(0 2px 3px #0002);
+      animation: twinkle 3s ease-in-out infinite;
+      transform-origin: center;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sparkle svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .moon-deco {
+      position: absolute;
+      width: clamp(36px, 5vw, 58px);
+      color: var(--citrus);
+      filter: drop-shadow(0 3px 6px #0002);
+      animation: drift 7s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .planet-deco {
+      position: absolute;
+      width: clamp(46px, 7vw, 80px);
+      color: var(--amalfi);
+      animation: drift 9s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .planet-deco .ring {
+      opacity: .85;
+    }
+
+    .planet-deco .body {
+      fill: currentColor;
+    }
+
+    .planet-deco .moonlet {
+      fill: var(--citrus);
+      animation: orbit-moon 5s linear infinite;
+      transform-origin: 50% 50%;
+    }
+
+    .comet-deco {
+      position: absolute;
+      width: clamp(60px, 9vw, 110px);
+      color: var(--sea);
+      opacity: .7;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .comet-deco .trail {
+      animation: comet-fade 2.6s ease-in-out infinite;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      border: 1.5px dashed var(--sea);
+      border-radius: 50%;
+      opacity: .45;
+      animation: spin 46s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .team-orbit-ring {
+      bottom: -60px;
+      right: clamp(15px, 4.5vw, 70px);
+      width: clamp(280px, 26vw, 370px);
+      height: clamp(280px, 26vw, 370px);
+      z-index: 1;
+    }
+
+    .orbit-ring .mini-planet {
+      position: absolute;
+      top: 50%;
+      left: -9px;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      color: var(--amalfi);
+    }
+
+    .orbit-ring .mini-planet svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes orbit-moon {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes drift {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-6deg);
+      }
+
+      50% {
+        transform: translateY(-14px) rotate(-2deg);
+      }
+    }
+
+    @keyframes comet-fade {
+
+      0%,
+      100% {
+        opacity: .25;
+      }
+
+      50% {
+        opacity: .75;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .sparkle,
+      .moon-deco,
+      .planet-deco,
+      .planet-deco .moonlet,
+      .comet-deco .trail,
+      .orbit-ring {
+        animation: none !important;
+      }
+    }
   </style>
 </head>
 
@@ -1472,18 +2364,78 @@
   <!-- ══════════════════════════════════════
      2. THE SPARK
 ══════════════════════════════════════ -->
-  <section id="spark">
-    <div class="spark-title">The Spark</div>
-    <div class="spark-eyebrow">Why Scintilla?</div>
-    <div class="spark-inner">
-      <div class="spark-image-placeholder">
-        <img src="assets/group_photo.jpg" alt="The Spark" />
-      </div>
-      <div class="spark-body">
-        Scintilla means "spark," but to us, it is far more than just a word. It is the ember of inspiration that catches
-        fire in curious minds, the quiet confidence that transforms hesitation into expression, and the space where
-        ideas grow, stories unfold, and creativity finds a home. Born from student initiative, Scintilla is a platform
-        built by students, for students — bringing together voices from across Shiv Nadar University Chennai.
+  <section id="spark" class="sec spk">
+
+    <!-- Independently scattered decorative elements — spaced across middle and surrounding negative space -->
+    <span class="sparkle" style="top:7%;left:44%;width:16px;--r:14deg;animation-delay:0.8s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="top:28%;left:8%;width:28px;animation-delay:1.5s;color:var(--sea)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+    <span class="sparkle" style="bottom:8%;left:18%;width:14px;--r:-22deg;animation-delay:2.2s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="sparkle" style="bottom:6%;left:52%;width:18px;--r:28deg;animation-delay:0.3s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="top:8%;left:80%;width:24px;animation-delay:3.1s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+    <span class="sparkle" style="top:54%;right:7%;width:15px;--r:-12deg;animation-delay:1.9s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+
+    <div class="spk-grid">
+      <figure class="spk-photo">
+        <img src="assets/group_photo.jpg" alt="The Scintilla team"
+          onerror="this.parentElement.classList.add('img-fallback')">
+      </figure>
+
+      <div class="spk-copy">
+        <div class="spk-hand-row">
+          <span class="spk-hand">why scintilla?</span>
+          <svg class="spk-arrow" viewBox="0 0 56 28" fill="none">
+            <path d="M 4 8 C 20 6, 36 12, 48 18" />
+            <path d="M 38 12 L 49 18 L 38 24" />
+          </svg>
+        </div>
+        <h2 class="spk-heading"><span class="outline">The</span> <span class="fill">Spark</span></h2>
+
+        <p class="spk-lead" data-reveal>Scintilla means <span class="hl hl-citrus">"spark"</span>.</p>
+
+        <p data-reveal>It started with a simple observation: a lot of genuinely good writing, art, and half-finished
+          poems were just sitting, going nowhere. Scintilla exists to change that — a space <span
+            class="hl hl-sea">built by students, for students</span>, to actually be read. No gatekeeping, no "is this
+          good enough" spiral.</p>
+
+        <p data-reveal>We're entirely student-run, from the writing to the design to the late-night debates over fonts.
+          What you see here is the result of that effort — a platform for the voices of <span class="scribble">Shiv
+            Nadar University Chennai</span> to be heard beyond a group chat.</p>
       </div>
     </div>
   </section>
@@ -1504,10 +2456,8 @@
 
 
     <!-- CLOSED: envelope only, click to open -->
-    <div class="ann-closed" id="annClosed"
-         onclick="openAnnouncement()"
-         role="button"
-         aria-label="Click the envelope to reveal this month's announcement">
+    <div class="ann-closed" id="annClosed" onclick="openAnnouncement()" role="button"
+      aria-label="Click the envelope to reveal this month's announcement">
       <img src="assets/envelope.png" class="ann-closed-img" id="annClosedImg" alt="Announcement envelope" />
       <span class="ann-click-hint">&darr; click to open &darr;</span>
     </div>
@@ -1536,7 +2486,51 @@
   <!-- ══════════════════════════════════════
      3. WHAT WE PUBLISH
 ══════════════════════════════════════ -->
-  <section id="publish">
+  <section id="publish" style="position:relative">
+
+    <span class="planet-deco" style="top:11%;left:6%;width:24px;animation-delay:2.1s;color:var(--sea)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+    <span class="sparkle" style="top:4%;left:24%;width:16px;--r:-18deg;animation-delay:0.5s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="sparkle" style="top:3%;right:18%;width:14px;--r:24deg;animation-delay:1.4s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="sparkle" style="bottom:2.5%;left:16%;width:15px;--r:15deg;animation-delay:2.8s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="sparkle" style="bottom:2.2%;left:54%;width:16px;--r:-25deg;animation-delay:0.9s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="bottom:2%;right:14%;width:22px;animation-delay:1.7s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+
     <div class="publish-header">
       <div class="publish-title">What We Publish ?</div>
       <div class="publish-sub">What You'll Find in Scintilla</div>
@@ -1587,9 +2581,50 @@
      4. OUR TEAM
 ══════════════════════════════════════ -->
   <section class="st-team" id="team" aria-labelledby="st-title">
+
+    <!-- Orbit ring placed behind the folder stack (st-stack is z-index: 5, orbit-ring is z-index: 1) -->
+    <div class="orbit-ring team-orbit-ring" aria-hidden="true">
+      <span class="mini-planet">
+        <svg viewBox="0 0 70 50">
+          <ellipse cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+            transform="rotate(-16 35 25)" />
+          <circle cx="35" cy="25" r="14" fill="currentColor" />
+        </svg>
+      </span>
+    </div>
+
+    <!-- Independently scattered decorative elements — spaced across middle and surrounding negative space -->
+    <span class="sparkle" style="top:4%;left:32%;width:15px;--r:-16deg;animation-delay:1.1s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="top:16%;left:58%;width:28px;animation-delay:0.4s;color:var(--amalfi)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+    <span class="sparkle" style="top:8%;right:14%;width:16px;--r:22deg;animation-delay:2.5s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="sparkle" style="top:36%;left:6%;width:14px;--r:10deg;animation-delay:1.8s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+
     <div class="st-head">
       <h2 id="st-title">Our Team</h2>
-      <p>Meet the people behind Scintilla: professors, proofreaders and pixel-pushers, powered by chai, deadlines and far too many group chats.</p>
+      <p>Meet the people behind Scintilla: professors, proofreaders and pixel-pushers.</p>
     </div>
     <div class="st-stack" id="stStack"></div>
   </section>
@@ -1597,31 +2632,70 @@
   <!-- ══════════════════════════════════════
      5. PREVIOUS EDITION
 ══════════════════════════════════════ -->
-  <section id="prev-edition">
-    <div class="prev-header">
-      <div class="prev-title">Previous Edition</div>
-    </div>
-    <div class="prev-inner">
-      <div>
-        <div class="prev-body">
-          The first edition of Scintilla was the result of months of dedication, collaboration, and creative effort.
-          From collecting and reviewing submissions to carefully curating and designing each page, our team worked
-          tirelessly to bring together a magazine that truly reflects the talent and voice of our college. Every detail
-          was thoughtfully considered, making this debut issue not just a publication, but a milestone that set the
-          foundation for everything Scintilla aims to become.
+  <section id="prev-edition" class="sec pe">
+
+    <!-- Independently scattered decorative elements — spaced across middle and surrounding negative space -->
+    <span class="sparkle" style="top:6%;left:10%;width:18px;--r:-14deg;animation-delay:0.7s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="top:6%;left:52%;width:24px;animation-delay:2.4s;color:var(--sea)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+    <span class="sparkle" style="top:50%;left:7%;width:14px;--r:20deg;animation-delay:1.6s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="sparkle" style="bottom:10%;left:40%;width:16px;--r:-26deg;animation-delay:3.0s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="bottom:6%;right:12%;width:22px;animation-delay:1.2s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+
+    <div class="pe-grid">
+      <div class="pe-copy">
+        <p class="pe-lead" data-reveal>Making a magazine from scratch is <span class="hl hl-citrus">easy</span>, said
+          <span class="hl hl-sea">no one on this team, ever</span>.
+        </p>
+
+        <div class="pe-cols">
+          <p data-reveal>Our debut issue took months, a lot of caffeine, and more revisions than we're willing to admit.
+            There was a group chat that never slept, a submissions inbox that somehow kept surprising us, and at least
+            one night where "we'll never finish this" was said out loud and meant.</p>
+          <p data-reveal>But it's out. It's real. And it's got some genuinely great work in it from people across campus
+            who trusted us with their writing, their art, their weird 2am ideas. Go read it — we promise it was worth
+            the chaos.</p>
         </div>
-        <a href="#prev-edition" class="prev-download" onclick="alert('First Edition PDF will be available for download shortly.'); return false;"><u>Download pdf</u></a>
+
+        <a class="pe-cta" href="v2 Scintilla - Magazine.pdf" download="v2 Scintilla - Magazine.pdf" data-reveal>Download
+          PDF ↓</a>
       </div>
-      <div class="prev-cover">
-        <img src="assets/Screenshot_2026-03-19_at_5_21_39_PM.png" alt="Scintilla First Edition"
-          class="prev-cover-actual-img"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="prev-cover-fallback" style="display:none;">
-          <div class="prev-cover-uni">SHIV NADAR<br>UNIVERSITY<br>CHENNAI<br>PRESENTS</div>
-          <div class="prev-cover-name">SCINTILLA</div>
-          <div class="prev-cover-tag">IGNITING MINDS ILLUMINATING IDEAS<br>2024–2025</div>
-        </div>
-      </div>
+
+      <figure class="pe-cover" data-reveal>
+        <span class="pe-sticker">Issue 01</span>
+        <img src="assets/Screenshot_2026-03-19_at_5_21_39_PM.png" alt="Scintilla first edition cover"
+          onerror="this.parentElement.classList.add('img-fallback')">
+      </figure>
     </div>
   </section>
 
@@ -1698,7 +2772,25 @@
   <!-- ══════════════════════════════════════
      7. FOOTER
 ══════════════════════════════════════ -->
-  <footer>
+  <footer style="position:relative;overflow:hidden">
+
+    <!-- Subtly placed decorative accents in open area -->
+    <span class="sparkle" style="top:22%;left:46%;width:15px;--r:12deg;animation-delay:0.8s;color:var(--citrus)"
+      aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C12 7 7 12 0 12C7 12 12 17 12 24C12 17 17 12 24 12C17 12 12 7 12 0Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="planet-deco" style="top:60%;left:56%;width:20px;animation-delay:2.2s;color:var(--sea)"
+      aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <ellipse class="ring" cx="35" cy="25" rx="32" ry="9" fill="none" stroke="currentColor" stroke-width="2.5"
+          transform="rotate(-16 35 25)" />
+        <circle class="body" cx="35" cy="25" r="14" />
+        <circle class="moonlet" cx="35" cy="6" r="2.6" />
+      </svg>
+    </span>
+
     <div>
       <div class="footer-brand-name">SCINTILLA</div>
       <div>Where ideas ignite.</div>
@@ -1714,7 +2806,7 @@
     <div class="footer-contact">
       <div class="footer-links-head">Contact</div>
       <div>scintilla@snuchennai.edu.in</div>
-      <div>@scintilla.mag</div>
+      <div><a href="https://www.instagram.com/scintilla_snuc?stkn=MWphMTRmMmphZTE0cw==" target="_blank" rel="noopener noreferrer">scintilla_snuc</a></div>
     </div>
     <div class="footer-bottom">
       © 2026 Scintilla Magazine<br>
@@ -1724,82 +2816,118 @@
 
   <!-- ── Our Team Section JS ── -->
   <script>
-    (function(){
-      var SAT="https://scintilla.snuchennai.edu.in/assets/image-removebg-preview(3)_1.png",
-          PLA="https://scintilla.snuchennai.edu.in/assets/image-removebg-preview(3)_2.png";
-      var T=[
-       {tab:"Faculty",lines:["FA","CU","LTY"],c:"#FFA62B",hv:"#86C5FF",tx:"#14264d",note:"The professors who keep us on track, and our commas in check.",img:SAT,faculty:true,items:[
-         ["Dr. Cherry Mathew","Associate Professor","Department of English"],
-         ["Dr. Sruti M D","Assistant Professor","Department of English"]]},
-       {tab:"Editorial",lines:["EDI","TOR","IAL"],c:"#86C5FF",hv:"#FFA62B",tx:"#14264d",note:"They read every word twice. Then a third time, just to be sure.",img:PLA,items:[
-         ["S. Aditiya Karthikeyan",4,"B.Tech Cyber"],["Dharini Manimaran",4,"B.Tech IoT"],
-         ["Ananya R",4,"B.Com PA"],["Lakshmi Sarmishta",4,"B.Com PA"],
-         ["Anirudh Srinivasan",4,"B.Tech Cyber"],["Nihma Naser",4,"B.Tech AI & DS"],
-         ["Varshitha P",3,"B.Tech CSE (IoT)"],["Deveshii Chauhan V",3,"B.A LL.B"],
-         ["Harshitha Jaishankar",3,"B.Com"],["Mangesh Kumar Soni",3,"B.Tech CSE (CS)"],
-         ["Ajeetha Jaishankar",3,"B.Tech CSE (CS)"],["Harini S",3,"B.A LL.B"],
-         ["Siddharth S",3,"B.Tech CSE (CS)"],["Vibilan D M",3,"B.Tech CSE (IoT)"],
-         ["Kailesh S",2,"B.Tech CSE (IoT)"],["Lakshmi Narayanan P",4,"B.Tech CSE (IoT)"],
-         ["Sahaana M S",1,"B.Tech CSE (IoT)"],["Archana R",1,"B.Sc Economics"],
-         ["Nikhil Nair",1,"B.Sc Economics"],["Keerthana Krishnan",1,"B.Sc Economics"],
-         ["Akshaya U G",1,"B.Tech ECE"],["Sesha Dharshini V",1,"B.Sc Economics"],
-         ["Shanmathi Ravindran",1,"B.Tech AI & DS"],["Nikila Perumal",1,"B.Tech CSE Core"]]},
-       {tab:"Design",lines:["DE","SI","GN"],c:"#2E5AA7",hv:"#86C5FF",tx:"#FFFDF5",note:"Will nudge it two pixels left. It will be perfect. Probably.",img:SAT,items:[
-         ["Siddharth Aravinth",4,"B.Tech Cyber"],["Pranov Shanker",4,"B.Tech IoT"],
-         ["Pavithra T. A.",4,"B.Tech AI & DS"],["S. Nittin Balajee",4,"B.Tech Cyber"],
-         ["Kavya I.",4,"B.Tech Cyber"],["Dhanyanyaa R",4,"B.Tech AI & DS"],
-         ["Vandana Padman",3,"B.Tech CSE (CS)"],["Miruthala Jayakumar",3,"B.Tech AI & DS"],
-         ["Hema Varshini",3,"B.Tech IoT"],
-         ["Kenneth Santino R",2,"B.Tech CSE (IoT)"],["Varsha G K",2,"B.A LL.B"],
-         ["Arnav Guntur",1,"B.Tech Mechanical"],["Vidula Arvind",1,"B.Tech Mechanical"],
-         ["Nandhini Sankara Subramanian",1,"B.Tech CSE Core"],["Shivani Sri Muthukumar",1,"B.Tech IT"],
-         ["Poorna S",1,"B.Tech CSE Core"],["Prakrithi Sirisilla",1,"B.Tech VLSI"],
-         ["Varsha Arun",1,"B.Tech IT"]]},
-       {tab:"Lead",lines:["LE","AD"],c:"#F8E6A0",hv:"#FFA62B",tx:"#14264d",note:"The ones who say 'quick call?' and mean forty minutes.",img:PLA,items:[
-         ["Vikranth",4,"B.Tech CSE Cybersecurity"],["Varsha Pillai M",4,"B.Tech CSE IoT"],
-         ["Nhavyae U.S.",3,"B.Tech CSE IoT"],["Srijai S.",3,"B.Tech IoT"]]}
+    (function () {
+      var SAT = "https://scintilla.snuchennai.edu.in/assets/image-removebg-preview(3)_1.png",
+        PLA = "https://scintilla.snuchennai.edu.in/assets/image-removebg-preview(3)_2.png";
+      var T = [
+        {
+          tab: "Faculty", lines: ["FA", "CU", "LTY"], c: "#FFA62B", hv: "#86C5FF", tx: "#14264d", note: "The professors who keep us on track, and our commas in check.", img: SAT, faculty: true, items: [
+            ["Dr. Cherry Mathew", "Associate Professor", "Department of English"],
+            ["Dr. Sruti M D", "Assistant Professor", "Department of English"]]
+        },
+        {
+          tab: "Editorial", lines: ["EDI", "TOR", "IAL"], c: "#86C5FF", hv: "#FFA62B", tx: "#14264d", note: "They read every word twice. Then a third time, just to be sure.", img: PLA, items: [
+            ["S. Aditiya Karthikeyan", 4, "B.Tech Cyber"], ["Dharini Manimaran", 4, "B.Tech IoT"],
+            ["Ananya R", 4, "B.Com PA"], ["Lakshmi Sarmishta", 4, "B.Com PA"],
+            ["Anirudh Srinivasan", 4, "B.Tech Cyber"], ["Nihma Naser", 4, "B.Tech AI & DS"],
+            ["Varshitha P", 3, "B.Tech CSE (IoT)"], ["Deveshii Chauhan V", 3, "B.A LL.B"],
+            ["Harshitha Jaishankar", 3, "B.Com"], ["Mangesh Kumar Soni", 3, "B.Tech CSE (CS)"],
+            ["Ajeetha Jaishankar", 3, "B.Tech CSE (CS)"], ["Harini S", 3, "B.A LL.B"],
+            ["Siddharth S", 3, "B.Tech CSE (CS)"], ["Vibilan D M", 3, "B.Tech CSE (IoT)"],
+            ["Kailesh S", 2, "B.Tech CSE (IoT)"], ["Lakshmi Narayanan P", 4, "B.Tech CSE (IoT)"],
+            ["Sahaana M S", 1, "B.Tech CSE (IoT)"], ["Archana R", 1, "B.Sc Economics"],
+            ["Nikhil Nair", 1, "B.Sc Economics"], ["Keerthana Krishnan", 1, "B.Sc Economics"],
+            ["Akshaya U G", 1, "B.Tech ECE"], ["Sesha Dharshini V", 1, "B.Sc Economics"],
+            ["Shanmathi Ravindran", 1, "B.Tech AI & DS"], ["Nikila Perumal", 1, "B.Tech CSE Core"]]
+        },
+        {
+          tab: "Design", lines: ["DE", "SI", "GN"], c: "#2E5AA7", hv: "#86C5FF", tx: "#FFFDF5", note: "Will nudge it two pixels left. It will be perfect. Probably.", img: SAT, items: [
+            ["Siddharth Aravinth", 4, "B.Tech Cyber"], ["Pranov Shanker", 4, "B.Tech IoT"],
+            ["Pavithra T. A.", 4, "B.Tech AI & DS"], ["S. Nittin Balajee", 4, "B.Tech Cyber"],
+            ["Kavya I.", 4, "B.Tech Cyber"], ["Dhanyanyaa R", 4, "B.Tech AI & DS"],
+            ["Vandana Padman", 3, "B.Tech CSE (CS)"], ["Miruthala Jayakumar", 3, "B.Tech AI & DS"],
+            ["Hema Varshini", 3, "B.Tech IoT"],
+            ["Kenneth Santino R", 2, "B.Tech CSE (IoT)"], ["Varsha G K", 2, "B.A LL.B"],
+            ["Arnav Guntur", 1, "B.Tech Mechanical"], ["Vidula Arvind", 1, "B.Tech Mechanical"],
+            ["Nandhini Sankara Subramanian", 1, "B.Tech CSE Core"], ["Shivani Sri Muthukumar", 1, "B.Tech IT"],
+            ["Poorna S", 1, "B.Tech CSE Core"], ["Prakrithi Sirisilla", 1, "B.Tech VLSI"],
+            ["Varsha Arun", 1, "B.Tech IT"]]
+        },
+        {
+          tab: "Event Coverage", lines: ["EV", "ENT"], c: "#4CAF7D", hv: "#F8E6A0", tx: "#FFFDF5", note: "On the ground, in the moment, getting the story before anyone else does.", img: SAT, items: [
+            ["Praijit Mahalingam", 1, "Chemical Engineering"],
+            ["Adhvaith S", 1, "CSE (IoT)"],
+            ["Ujwal Karthik Vasepalli", 1, "B.A LL.B"],
+            ["Hima Teja Varma Uppalapati", 1, "CSE (IoT)"],
+            ["Prathikka Janakiraman", 1, "Biomedical Engineering"],
+            ["Rithanya S", 1, "Chemical Engineering"],
+            ["Harshethaa Sv", 1, "CSE (CS)"],
+            ["Vamsi Harinii B", 1, "ECE"],
+            ["Medha Rabindranathnambi", 2, "B.A LL.B"]]
+        },
+        {
+          tab: "Lead", lines: ["LE", "AD"], c: "#F8E6A0", hv: "#FFA62B", tx: "#14264d", note: "The ones who say 'quick call?' and mean forty minutes.", img: PLA, items: [
+            ["Vikranth", 4, "B.Tech CSE Cybersecurity"], ["Varsha Pillai M", 4, "B.Tech CSE IoT"],
+            ["Nhavyae U.S.", 3, "B.Tech CSE IoT"], ["Srijai S.", 3, "B.Tech IoT"]]
+        }
       ];
-      var ord={1:"1st",2:"2nd",3:"3rd",4:"4th"}, root=document.getElementById("stStack");
-      if(!root) return;
-      T.forEach(function(g){if(!g.faculty)g.items.sort(function(a,b){return b[1]-a[1]})}); /* seniors first */
+      var ord = { 1: "1st", 2: "2nd", 3: "3rd", 4: "4th" }, root = document.getElementById("stStack");
+      if (!root) return;
+      T.forEach(function (g) { if (!g.faculty) g.items.sort(function (a, b) { return b[1] - a[1] }) }); /* seniors first */
 
-      root.innerHTML=T.map(function(g,i){
-        var slips=g.items.map(function(p,n){
-          var meta=g.faculty?'<span>'+p[1]+'</span><span>'+p[2]+'</span>'
-                            :'<b>'+ord[p[1]]+' year</b><span>'+p[2]+'</span>';
-          return '<li class="st-slip'+(g.faculty?' faculty':'')+'" style="--n:'+n+'"><span class="st-nm">'+p[0]+'</span><span class="st-meta">'+meta+'</span></li>';
+      root.innerHTML = T.map(function (g, i) {
+        var slips = g.items.map(function (p, n) {
+          var meta = g.faculty ? '<span>' + p[1] + '</span><span>' + p[2] + '</span>'
+            : '<b>' + ord[p[1]] + ' year</b><span>' + p[2] + '</span>';
+          return '<li class="st-slip' + (g.faculty ? ' faculty' : '') + '" style="--n:' + n + '"><span class="st-nm">' + p[0] + '</span><span class="st-meta">' + meta + '</span></li>';
         }).join("");
-        return '<article class="st-folder" style="--c:'+g.c+';--hv:'+g.hv+';--tx:'+g.tx+';--i:'+i+'">'+
-          '<div class="st-tabrow"><button class="st-tab" id="st-t'+i+'" aria-expanded="false" aria-controls="st-p'+i+'">'+g.tab+'<i>'+g.items.length+'</i><span class="st-hit"></span></button></div>'+
-          '<div class="st-body"><div class="st-lip"></div>'+
-          '<div class="st-panel" id="st-p'+i+'" role="region" aria-labelledby="st-t'+i+'"><div class="st-inner"><div class="st-content">'+
-            '<div class="st-label"><h3 aria-label="'+g.tab+'">'+g.lines.map(function(l){return '<span aria-hidden="true">'+l+'</span>'}).join("")+'</h3>'+
-            '<small><strong>'+g.items.length+(g.faculty?' advisors':' people')+'</strong><br>'+g.note+'</small>'+
-            '<img class="st-planet" src="'+g.img+'" alt="" aria-hidden="true" onerror="this.remove()"></div>'+
-            '<ul class="st-list">'+slips+'</ul></div></div></div></div></article>';
+        return '<article class="st-folder" style="--c:' + g.c + ';--hv:' + g.hv + ';--tx:' + g.tx + ';--i:' + i + '">' +
+          '<div class="st-tabrow"><button class="st-tab" id="st-t' + i + '" aria-expanded="false" aria-controls="st-p' + i + '">' + g.tab + '<i>' + g.items.length + '</i><span class="st-hit"></span></button></div>' +
+          '<div class="st-body"><div class="st-lip"></div>' +
+          '<div class="st-panel" id="st-p' + i + '" role="region" aria-labelledby="st-t' + i + '"><div class="st-inner"><div class="st-content">' +
+          '<div class="st-label"><h3 aria-label="' + g.tab + '">' + g.lines.map(function (l) { return '<span aria-hidden="true">' + l + '</span>' }).join("") + '</h3>' +
+          '<p class="st-note">' + g.note + '</p></div>' +
+          '<ul class="st-list">' + slips + '</ul></div></div></div></div></article>';
       }).join("");
 
-      var folders=[].slice.call(root.querySelectorAll(".st-folder")),
-          tabs=folders.map(function(f){return f.querySelector(".st-tab")});
+      var folders = [].slice.call(root.querySelectorAll(".st-folder")),
+        tabs = folders.map(function (f) { return f.querySelector(".st-tab") });
 
-      function open(i,forceOpen){
-        var was=folders[i].classList.contains("open"), on=forceOpen?true:!was;
-        folders.forEach(function(f,k){
-          var v=(k===i)?on:false;
-          f.classList.toggle("open",v);
-          tabs[k].setAttribute("aria-expanded",v);
+      function open(i, forceOpen) {
+        var was = folders[i].classList.contains("open"), on = forceOpen ? true : !was;
+        folders.forEach(function (f, k) {
+          var v = (k === i) ? on : false;
+          f.classList.toggle("open", v);
+          tabs[k].setAttribute("aria-expanded", v);
         });
       }
-      tabs.forEach(function(t,i){
-        var f=folders[i];
-        t.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse")f.classList.add("lift")});
-        t.addEventListener("pointerleave",function(){f.classList.remove("lift")});
-        t.addEventListener("focus",function(){if(t.matches(":focus-visible"))f.classList.add("lift")});
-        t.addEventListener("blur",function(){f.classList.remove("lift")});
-        t.addEventListener("click",function(){open(i)});
-        t.addEventListener("keydown",function(e){
-          var d={ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1}[e.key];
-          if(d){e.preventDefault();var j=(i+d+tabs.length)%tabs.length;tabs[j].focus();open(j,true)}
+      folders.forEach(function (f, i) {
+        var t = tabs[i];
+        var body = f.querySelector(".st-body");
+
+        function onEnter(e) {
+          if (!e.pointerType || e.pointerType === "mouse") f.classList.add("lift");
+        }
+        function onLeave(e) {
+          if (e.relatedTarget && f.contains(e.relatedTarget)) return;
+          f.classList.remove("lift");
+        }
+
+        t.addEventListener("pointerenter", onEnter);
+        t.addEventListener("pointerleave", onLeave);
+        if (body) {
+          body.addEventListener("pointerenter", onEnter);
+          body.addEventListener("pointerleave", onLeave);
+        }
+
+        t.addEventListener("focus", function () { if (t.matches(":focus-visible")) f.classList.add("lift") });
+        t.addEventListener("blur", function () { f.classList.remove("lift") });
+        t.addEventListener("click", function () { open(i) });
+        var lip = f.querySelector(".st-lip");
+        if (lip) lip.addEventListener("click", function () { open(i) });
+        t.addEventListener("keydown", function (e) {
+          var d = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+          if (d) { e.preventDefault(); var j = (i + d + tabs.length) % tabs.length; tabs[j].focus(); open(j, true) }
         });
       });
     })();
@@ -1834,12 +2962,29 @@
     })();
   </script>
 
+  <!-- ── [data-reveal] Highlight & Fade Reveal JS ── -->
+  <script>
+    (function () {
+      var els = document.querySelectorAll('[data-reveal]');
+      els.forEach(function (el, i) { el.style.setProperty('--d', (i % 5 * 80) + 'ms'); });
+      var revealIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('vis');
+            revealIo.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
+      els.forEach(function (el) { revealIo.observe(el); });
+    })();
+  </script>
+
   <!-- ── Announcement Section JS ── -->
   <script>
     (function () {
-      const REVEAL_TEXT = "This month's Scintilla takes a joyful dive into the world of Cartoons! From timeless classics and nostalgic favorites to modern animated adventures, this edition celebrates the characters and stories that made us laugh, dream, and grow";
+      const REVEAL_TEXT = "This Edition Scintilla takes a joyful dive into the world of Cartoons! From timeless classics and nostalgic favorites to modern animated adventures, this edition celebrates the characters and stories that made us laugh, dream, and grow";
 
-      let revealed    = false;
+      let revealed = false;
 
       /* ─── Typewriter utility ─── */
       function typeString(el, text, speed, onDone) {
@@ -1859,7 +3004,7 @@
         revealed = true;
 
         /* 1. Hide closed envelope */
-        const closed   = document.getElementById('annClosed');
+        const closed = document.getElementById('annClosed');
         const expanded = document.getElementById('annExpanded');
         if (!closed || !expanded) return;
 
@@ -1868,8 +3013,8 @@
         if (closedImg) closedImg.src = 'assets/envelope_open.png';
 
         closed.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        closed.style.opacity    = '0';
-        closed.style.transform  = 'scale(0.9) translateY(-10px)';
+        closed.style.opacity = '0';
+        closed.style.transform = 'scale(0.9) translateY(-10px)';
 
         setTimeout(() => {
           closed.style.display = 'none';
