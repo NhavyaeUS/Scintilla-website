@@ -55,7 +55,8 @@ body{margin:0;background:#FFF7DC}
 
 .st-body{background:var(--c);border-radius:22px 22px 0 0;box-shadow:0 -6px 16px #14264d26,inset 0 2px 0 #fff6;position:relative;padding-bottom:clamp(16px,1.8vw,22px)}
 .st-folder:last-child .st-body{border-radius:22px;padding-bottom:clamp(30px,3.8vw,48px)}
-.st-lip{height:clamp(54px,6.5vw,76px);cursor:pointer}
+.st-lip{height:clamp(54px,6.5vw,76px);cursor:pointer;transition:height .65s cubic-bezier(.65,0,.2,1)}
+.st-folder.open .st-lip{height:clamp(16px,2vw,24px)}
 .st-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .65s cubic-bezier(.65,0,.2,1)}
 .st-folder.open .st-panel{grid-template-rows:1fr}
 .st-inner{min-height:0;overflow:hidden}

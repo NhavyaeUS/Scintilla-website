@@ -867,6 +867,11 @@
     .st-lip {
       height: clamp(54px, 6.5vw, 76px);
       cursor: pointer;
+      transition: height .65s cubic-bezier(.65, 0, .2, 1);
+    }
+
+    .st-folder.open .st-lip {
+      height: clamp(16px, 2vw, 24px);
     }
 
     .st-panel {
