@@ -32,6 +32,29 @@
       background-color: #f5ecd7;
       font-family: 'Hind', sans-serif;
       overflow-x: hidden;
+      cursor: url('Group 129.svg') 12 4, auto;
+    }
+
+    /* ── Global clickable-element cursor ── */
+    a,
+    a *,
+    button,
+    button *,
+    [role="button"],
+    [role="button"] *,
+    .btn-ms,
+    .btn-ms *,
+    nav a,
+    nav a * {
+      cursor: url('Group 26.svg') 8 2, pointer !important;
+    }
+
+    button:disabled,
+    button:disabled *,
+    .btn-ms:disabled,
+    .btn-ms:disabled *,
+    [disabled] {
+      cursor: not-allowed !important;
     }
 
     /* ── PAGE WRAPPER ── */

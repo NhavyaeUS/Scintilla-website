@@ -27,7 +27,46 @@
     --section: 'Oswald', sans-serif;
   }
   html { scroll-behavior: smooth; }
-  body { background: var(--cream); color: var(--dark); font-family: var(--mono); min-height: 100vh; }
+  body {
+    background: var(--cream);
+    color: var(--dark);
+    font-family: var(--mono);
+    min-height: 100vh;
+    cursor: url('Group 129.svg') 12 4, auto;
+  }
+
+  /* ── Global clickable-element cursor ── */
+  a,
+  a *,
+  button,
+  button *,
+  [role="button"],
+  [role="button"] *,
+  label[for],
+  .category-card,
+  .category-card *,
+  .upload-zone,
+  .upload-zone *,
+  .upload-zone-label,
+  .upload-zone-label *,
+  .consent-item label,
+  .consent-item input[type="checkbox"],
+  .clear-all-btn,
+  .submit-all-btn,
+  .cart-remove,
+  .cart-remove *,
+  .topbar a,
+  .user-badge {
+    cursor: url('Group 26.svg') 8 2, pointer !important;
+  }
+
+  button:disabled,
+  button:disabled *,
+  .submit-all-btn:disabled,
+  input:disabled,
+  [disabled] {
+    cursor: not-allowed !important;
+  }
 
   /* ─── TOPBAR ─── */
   .topbar {

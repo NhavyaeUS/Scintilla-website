@@ -13,7 +13,19 @@
   --bg:var(--cream); --paper:#FFFDF5; --ink:#14264d;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--cream);color:var(--ink);font-family:"Space Mono",ui-monospace,monospace}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:"Space Mono",ui-monospace,monospace;cursor:url('Group 129.svg') 12 4,auto}
+
+/* ── Global clickable-element cursor ── */
+a,
+a *,
+button,
+button *,
+[role="button"],
+[role="button"] *,
+.pe-cta,
+.pe-cta * {
+  cursor: url('Group 26.svg') 8 2, pointer !important;
+}
 img{max-width:100%;display:block}
 .sec{position:relative;overflow:hidden;padding:clamp(36px,4.5vw,64px) clamp(20px,5vw,80px)}
 
