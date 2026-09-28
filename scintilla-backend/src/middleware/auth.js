@@ -19,7 +19,7 @@ const logger = require('../utils/logger');
 
 // These must match the Azure AD App Registration values in scintilla_login.html
 const TENANT_ID = process.env.MS_TENANT_ID || '5beb351c-3fb8-418f-b612-fe36ace96ef3';
-const CLIENT_ID = process.env.MS_CLIENT_ID || 'a70575c0-d17b-438a-b8cc-8341626ee44d';
+const CLIENT_ID = process.env.MS_CLIENT_ID || '14352224-eae3-4dd0-a55a-7d89c31beeb8';
 const ALLOWED_EMAIL_DOMAIN = 'snuchennai.edu.in';
 
 // Microsoft's JWKS endpoint for the tenant — used to verify token signatures
