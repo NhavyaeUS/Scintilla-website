@@ -142,6 +142,45 @@
     padding-bottom: 8px;
     border-bottom: 1px solid var(--gray-border);
   }
+
+  /* ─── GUIDELINES BOX ─── */
+  .guidelines-box {
+    background: var(--cream);
+    border: 1px solid var(--gray-border);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .guidelines-title {
+    font-family: var(--section);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--dark);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .guidelines-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #444;
+    line-height: 1.5;
+  }
+  .guidelines-list li {
+    position: relative;
+    padding-left: 14px;
+  }
+  .guidelines-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--dark);
+  }
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -359,6 +398,7 @@
     .cart-panel { position: static; }
     .form-row { grid-template-columns: 1fr; }
     .topbar-links { display: none; }
+    .guidelines-list { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -394,6 +434,19 @@
   <div>
     <div class="form-panel">
 
+      <!-- Submission Guidelines -->
+      <div class="guidelines-box">
+        <div class="guidelines-title">Submission Guidelines</div>
+        <ul class="guidelines-list">
+          <li><strong>Formats:</strong> PDF, DOCX, JPG, PNG</li>
+          <li><strong>File Size:</strong> Maximum 25 MB per file</li>
+          <li><strong>Cart Limit:</strong> Maximum 10 items per submission</li>
+          <li><strong>Title Length:</strong> Maximum 120 characters</li>
+          <li><strong>Articles &amp; Stories:</strong> 500 to 1,500 words</li>
+          <li><strong>Poetry:</strong> Up to 50 lines</li>
+        </ul>
+      </div>
+
       <!-- Basic Details -->
       <div class="form-section-head">Basic Details</div>
       <div class="form-row">
@@ -412,18 +465,30 @@
         <div class="form-section-head">Academic Details</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Course</label>
+            <label class="form-label">Course / Role</label>
             <div class="form-select-wrap">
               <select class="form-select" id="course">
-                <option value="" disabled selected>Select course</option>
-                <option>BTech CSE (IoT)</option>
-                <option>BTech CSE (AIDS)</option>
-                <option>BTech CSE (Cybersecurity)</option>
-                <option>B.Com</option>
-                <option>B.Sc Economics (Data Science)</option>
-                <option>B.Com (Professional Accounting)</option>
-                <option>B.Com / B.Com (Hons.)</option>
-                <option>5-Year Integrated B.A., LL.B. Program</option>
+                <option value="" disabled selected>Select your course / role</option>
+                <option>B.Tech. Artificial Intelligence and Data Science</option>
+                <option>B.Tech. Biomedical Engineering</option>
+                <option>B.Tech. Chemical Engineering</option>
+                <option>B.Tech. Civil Engineering</option>
+                <option>B.Tech. Computer Science and Engineering</option>
+                <option>B.Tech. Computer Science and Engineering (Cyber Security)</option>
+                <option>B.Tech. Computer Science and Engineering (Internet of Things)</option>
+                <option>B.Tech. Electrical & Electronics Engineering</option>
+                <option>B.Tech. Electronics and Communication Engineering</option>
+                <option>B.Tech. Electronics and Communication Engineering (VLSI Design and Technology)</option>
+                <option>B.Tech. Information Technology</option>
+                <option>B.Tech. Mechanical Engineering</option>
+                <option>B.Com. / B.Com. (Hons.)</option>
+                <option>B.Com. (Professional Accounting)</option>
+                <option>B.Sc. Economics (Data Science)</option>
+                <option>B.A., LL.B.</option>
+                <option>M.Tech. Student</option>
+                <option>MBA Student</option>
+                <option>Ph.D. Scholar</option>
+                <option>Faculty</option>
               </select>
             </div>
           </div>

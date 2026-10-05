@@ -15,13 +15,31 @@ function sanitizeControlChars(str) {
  * Allowed courses — exact match to the frontend <select> options.
  */
 const ALLOWED_COURSES = [
+  'B.Tech. Artificial Intelligence and Data Science',
+  'B.Tech. Biomedical Engineering',
+  'B.Tech. Chemical Engineering',
+  'B.Tech. Civil Engineering',
+  'B.Tech. Computer Science and Engineering',
+  'B.Tech. Computer Science and Engineering (Cyber Security)',
+  'B.Tech. Computer Science and Engineering (Internet of Things)',
+  'B.Tech. Electrical & Electronics Engineering',
+  'B.Tech. Electronics and Communication Engineering',
+  'B.Tech. Electronics and Communication Engineering (VLSI Design and Technology)',
+  'B.Tech. Information Technology',
+  'B.Tech. Mechanical Engineering',
+  'B.Com. / B.Com. (Hons.)',
+  'B.Com. (Professional Accounting)',
+  'B.Sc. Economics (Data Science)',
+  'B.A., LL.B.',
+  'M.Tech. Student',
+  'MBA Student',
+  'Ph.D. Scholar',
+  'Faculty',
+  // Backward compatibility with legacy entries
   'BTech CSE (IoT)',
   'BTech CSE (AIDS)',
   'BTech CSE (Cybersecurity)',
   'B.Com',
-  'B.Sc Economics (Data Science)',
-  'B.Com (Professional Accounting)',
-  'B.Com / B.Com (Hons.)',
   '5-Year Integrated B.A., LL.B. Program',
 ];
 

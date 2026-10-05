@@ -234,11 +234,13 @@
     .auth-status {
       font-family: 'Fragment Mono', monospace;
       font-size: 13px;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 6px;
-      max-width: 420px;
+      max-width: 500px;
       margin-bottom: 16px;
       display: none;
+      text-align: left;
+      line-height: 1.45;
     }
 
     .auth-status.error {
@@ -413,6 +415,22 @@
       showStatus('error', "Authentication service is unavailable: " + err.message);
     }
 
+    // Detect if this window was opened as an MSAL popup or iframe
+    const isMsalPopup = !!(
+      (window.opener && window.opener !== window) ||
+      (window.name && window.name.indexOf('msal') !== -1)
+    );
+
+    // If inside a popup window, prevent users from clicking sign-in again (which causes block_nested_popups)
+    if (isMsalPopup) {
+      const btn = document.getElementById('signInBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.querySelector('span').textContent = 'Authenticating...';
+      }
+      showStatus('loading', '<span class="spinner"></span> Completing sign-in. This window will close automatically...');
+    }
+
     // Dynamic MSAL initialization check (MSAL v3+ requires initialize(), MSAL v2 does not)
     async function initMsal() {
       if (!msalInstance) return;
@@ -421,7 +439,9 @@
           await msalInstance.initialize();
         }
         const response = await msalInstance.handleRedirectPromise();
-        handleResponse(response);
+        if (response) {
+          handleResponse(response);
+        }
       } catch (error) {
         handleError(error);
       }
@@ -432,10 +452,19 @@
 
     /**
      * Handle the authentication response from Microsoft.
-     * Validates the email domain and stores auth info in sessionStorage.
+     * Validates the email domain and stores auth info in localStorage.
      */
     function handleResponse(response) {
       if (!response) return; // No redirect response, user hasn't logged in yet
+
+      // If we are executing inside the popup window, close it cleanly
+      if (isMsalPopup) {
+        showStatus('success', 'Sign-in verified. Closing window...');
+        setTimeout(() => {
+          try { window.close(); } catch (e) {}
+        }, 600);
+        return;
+      }
 
       const account = response.account;
       const email = (account.username || '').toLowerCase();
@@ -476,15 +505,24 @@
     function handleError(error) {
       console.error('MSAL Error:', error);
       const btn = document.getElementById('signInBtn');
-      btn.disabled = false;
-      btn.querySelector('span').textContent = 'Sign in with Microsoft';
+      if (btn && !isMsalPopup) {
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Sign in with Microsoft';
+      }
 
-      if (error.errorCode === 'user_cancelled') {
+      const msg = (error && error.message) ? error.message : '';
+      const code = (error && error.errorCode) ? error.errorCode : '';
+
+      if (code === 'user_cancelled') {
         showStatus('error', 'Sign-in was cancelled. Click the button to try again.');
-      } else if (error.errorCode === 'popup_window_error') {
+      } else if (code === 'popup_window_error') {
         showStatus('error', 'Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.');
+      } else if (code === 'block_nested_popups' || msg.includes('block_nested_popups')) {
+        showStatus('error', 'Sign-in is already in progress in another window. Please finish logging in there or close this window and try again.');
+      } else if (msg.includes('9002326') || msg.includes('Cross-origin token redemption')) {
+        showStatus('error', '<strong>Azure AD Configuration Error (AADSTS9002326):</strong><br>The college Azure AD App Registration has the Redirect URI registered under <em>"Web"</em> instead of <em>"Single-Page Application" (SPA)</em>.<br><br>Please ask the IT admin to move the redirect URL to <strong>Single-page application</strong> in Azure Portal.');
       } else {
-        showStatus('error', 'Authentication failed: ' + escapeHtml(error.message || 'Unknown error'));
+        showStatus('error', 'Authentication failed: ' + escapeHtml(msg || 'Unknown error'));
       }
     }
 
@@ -492,6 +530,11 @@
      * Initiate Microsoft SSO login via popup.
      */
     async function signIn() {
+      if (isMsalPopup) {
+        showStatus('error', 'Sign-in is already in progress in another window.');
+        return;
+      }
+
       const btn = document.getElementById('signInBtn');
       btn.disabled = true;
       btn.querySelector('span').textContent = 'Signing in...';
@@ -533,6 +576,9 @@
     //  On page load: check if user is already authenticated
     // ═══════════════════════════════════════════════════════════
     (function checkExistingAuth() {
+      // Do not auto-redirect if this window is an active auth popup
+      if (isMsalPopup) return;
+
       try {
         const stored = localStorage.getItem('scintilla_auth');
         if (stored) {
