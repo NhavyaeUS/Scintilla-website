@@ -391,10 +391,10 @@
         redirectUri: window.location.origin + '/scintilla_login.html',
       },
       cache: {
-        // localStorage keeps MSAL's token cache alive across tab closes and browser restarts,
-        // which is required for acquireTokenSilent() to work on submit.html.
+        // localStorage keeps MSAL's token cache alive across tab closes and browser restarts.
+        // storeAuthStateInCookie: true is required by Microsoft Edge to preserve auth state across security zones.
         cacheLocation: 'localStorage',
-        storeAuthStateInCookie: false,
+        storeAuthStateInCookie: true,
       },
     };
 
@@ -455,35 +455,38 @@
      * Validates the email domain and stores auth info in localStorage.
      */
     function handleResponse(response) {
-      if (!response) return; // No redirect response, user hasn't logged in yet
-
-      // If we are executing inside the popup window, close it cleanly
-      if (isMsalPopup) {
-        showStatus('success', 'Sign-in verified. Closing window...');
-        setTimeout(() => {
-          try { window.close(); } catch (e) {}
-        }, 600);
-        return;
-      }
+      if (!response || !response.account) return;
 
       const account = response.account;
-      const email = (account.username || '').toLowerCase();
-      const displayName = account.name || '';
+      const email = (
+        account.username ||
+        (account.idTokenClaims && (account.idTokenClaims.preferred_username || account.idTokenClaims.email || account.idTokenClaims.upn)) ||
+        ''
+      ).toLowerCase();
+      const displayName = account.name || (account.idTokenClaims && account.idTokenClaims.name) || '';
 
       // Verify the email domain
       if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
-        showStatus('error', `Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed. You signed in as: ${escapeHtml(email)}`);
-        // Sign out the unauthorized account
-        msalInstance.logoutPopup({ account: account }).catch(() => {});
+        showStatus('error', `Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed. You signed in as: ${escapeHtml(email || 'unknown account')}. Please sign in using your college Microsoft account.`);
+        const btn = document.getElementById('signInBtn');
+        if (btn) {
+          btn.disabled = false;
+          btn.querySelector('span').textContent = 'Sign in with Microsoft';
+        }
+        // Silently clear active account in MSAL without spawning secondary popups (which fail/block in Chrome)
+        try {
+          if (typeof msalInstance.setActiveAccount === 'function') {
+            msalInstance.setActiveAccount(null);
+          }
+        } catch (e) {}
         return;
       }
 
-      // Store authenticated user info in localStorage (persists across tab closes)
+      // Store authenticated user info in localStorage (persists across tab closes and syncs across windows)
       const authData = {
         name: displayName,
         email: email,
         // Save the ID token so submit.html can send it to the backend for server-side identity verification.
-        // idToken is the correct token for proving who the user is (accessToken is for calling MS APIs).
         accessToken: response.idToken,
         timestamp: Date.now(),
         // Token expiry — sync to the actual MSAL token expiry if available, else default to 1 hour
@@ -491,12 +494,21 @@
       };
       localStorage.setItem('scintilla_auth', JSON.stringify(authData));
 
+      // If we are executing inside the popup window, close it cleanly
+      if (isMsalPopup) {
+        showStatus('success', 'Sign-in verified. Closing window...');
+        setTimeout(() => {
+          try { window.close(); } catch (e) {}
+        }, 500);
+        return;
+      }
+
       showStatus('success', `Welcome, ${escapeHtml(displayName)}! Redirecting to submission portal...`);
 
       // Redirect to the submission form
       setTimeout(() => {
         window.location.href = 'submit.html';
-      }, 1200);
+      }, 1000);
     }
 
     /**
@@ -515,10 +527,19 @@
 
       if (code === 'user_cancelled') {
         showStatus('error', 'Sign-in was cancelled. Click the button to try again.');
-      } else if (code === 'popup_window_error') {
-        showStatus('error', 'Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.');
-      } else if (code === 'block_nested_popups' || msg.includes('block_nested_popups')) {
-        showStatus('error', 'Sign-in is already in progress in another window. Please finish logging in there or close this window and try again.');
+      } else if (code === 'popup_window_error' || code === 'empty_window_error' || msg.includes('popup_window_error')) {
+        // If Edge, Chrome, or any browser blocks popups, smoothly fall back to redirect flow
+        showStatus('loading', '<span class="spinner"></span> Pop-up blocked by browser. Redirecting directly to Microsoft sign-in...');
+        setTimeout(() => {
+          try {
+            msalInstance.loginRedirect(loginRequest);
+          } catch (e) {
+            showStatus('error', 'Redirect sign-in failed. Please allow pop-ups for this site and try again.');
+            if (btn) btn.disabled = false;
+          }
+        }, 800);
+      } else if (code === 'block_nested_popups' || msg.includes('block_nested_popups') || code === 'interaction_in_progress' || msg.includes('interaction_in_progress')) {
+        showStatus('error', 'Sign-in is already in progress. Please close any other open login windows, wait a moment, and click the button to try again.');
       } else if (msg.includes('9002326') || msg.includes('Cross-origin token redemption')) {
         showStatus('error', '<strong>Azure AD Configuration Error (AADSTS9002326):</strong><br>The college Azure AD App Registration has the Redirect URI registered under <em>"Web"</em> instead of <em>"Single-Page Application" (SPA)</em>.<br><br>Please ask the IT admin to move the redirect URL to <strong>Single-page application</strong> in Azure Portal.');
       } else {
@@ -546,15 +567,26 @@
       }
 
       try {
-        if (typeof msalInstance.initialize === 'function') {
-          await msalInstance.initialize();
-        }
+        // Direct invocation preserves the user gesture click token in Chrome (preventing pop-up blocker)
         const response = await msalInstance.loginPopup(loginRequest);
         handleResponse(response);
       } catch (error) {
         handleError(error);
       }
     }
+
+    // Listen for storage events across windows (allows main tab to detect when the popup saves auth into localStorage)
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'scintilla_auth' && e.newValue && !isMsalPopup) {
+        try {
+          const auth = JSON.parse(e.newValue);
+          if (auth && auth.email && auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
+            showStatus('success', `Welcome, ${escapeHtml(auth.name)}! Redirecting to submission portal...`);
+            setTimeout(() => { window.location.href = 'submit.html'; }, 800);
+          }
+        } catch (err) {}
+      }
+    });
 
     /**
      * Show status message to the user.

@@ -618,9 +618,9 @@
       redirectUri: window.location.origin + '/scintilla_login.html',
     },
     cache: {
-      // Must match scintilla_login.html — localStorage so MSAL finds the cached account
+      // Must match scintilla_login.html — localStorage and storeAuthStateInCookie for Edge
       cacheLocation: 'localStorage',
-      storeAuthStateInCookie: false,
+      storeAuthStateInCookie: true,
     },
   };
 
@@ -649,7 +649,12 @@
       // Find the cached account MSAL knows about
       const accounts = msalInstance.getAllAccounts();
       if (!accounts || accounts.length === 0) {
-        // No account in cache — session fully lost, send to login
+        // Fall back to stored token if still unexpired
+        const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+        if (stored.accessToken && stored.expiresAt && stored.expiresAt > Date.now()) {
+          return stored.accessToken;
+        }
+        // No account in cache and stored token expired — session fully lost, send to login
         localStorage.removeItem('scintilla_auth');
         window.location.href = 'scintilla_login.html';
         return null;

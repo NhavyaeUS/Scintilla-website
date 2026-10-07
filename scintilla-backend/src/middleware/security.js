@@ -77,7 +77,7 @@ const securityHeaders = {
   // Cross-origin policies
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "same-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin" },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
   // HSTS: 1 year, include subdomains, preload-ready
   hsts: {
     maxAge: 31536000,
