@@ -404,16 +404,32 @@
     // ─── Stale interaction state cleanup ─────────────────────────
     // Chrome and Edge sometimes leave 'msal.interaction.status' = 'interaction_in_progress'
     // in sessionStorage after a failed or crashed login attempt, permanently blocking future
-    // logins until the tab is closed. Clear it defensively on every page load.
-    (function clearStaleInteractionState() {
-      try {
-        Object.keys(sessionStorage).forEach(function(key) {
-          if (key.indexOf('interaction.status') !== -1 || key.indexOf('msal.') !== -1) {
-            sessionStorage.removeItem(key);
-          }
-        });
-      } catch (e) {}
-    })();
+    // logins until the tab is closed.
+    //
+    // CRITICAL: We must NOT clear sessionStorage when Microsoft has just redirected us back
+    // with an auth code (?code=...&state=...). MSAL stores the nonce, state, and code_verifier
+    // in sessionStorage BEFORE the redirect, and reads them back on return to validate the
+    // callback. Clearing them first causes handleRedirectPromise() to return null — which is
+    // exactly why a page reload was needed (the reload preserved sessionStorage).
+    // Only clear on a fresh page load (no redirect callback in progress).
+    const _urlParamsEarly = new URLSearchParams(window.location.search);
+    const _hashEarly = window.location.hash;
+    const _isCallback = (
+      _hashEarly.includes('code=') || _hashEarly.includes('error=') ||
+      _urlParamsEarly.has('code') || _urlParamsEarly.has('error') || _urlParamsEarly.has('state')
+    );
+    if (!_isCallback) {
+      // Safe to clear — this is a fresh page load, not a redirect-back from Microsoft.
+      (function clearStaleInteractionState() {
+        try {
+          Object.keys(sessionStorage).forEach(function(key) {
+            if (key.indexOf('interaction.status') !== -1) {
+              sessionStorage.removeItem(key);
+            }
+          });
+        } catch (e) {}
+      })();
+    }
 
     const loginRequest = {
       scopes: ['User.Read'],
@@ -480,20 +496,36 @@
         if (typeof msalInstance.initialize === 'function') {
           await msalInstance.initialize();
         }
+        // handleRedirectPromise() MUST be called on every page load.
+        // When we are on the redirect-callback URL (isMsalCallback=true), MSAL reads the
+        // code+state from the URL and the nonce from sessionStorage, exchanges the code for
+        // tokens, and returns a full AuthenticationResult. This only works if sessionStorage
+        // was NOT cleared before this call (see the fix above).
         const response = await msalInstance.handleRedirectPromise();
         if (response) {
+          // Got a fresh token from the redirect — store it and navigate to submit page
           handleResponse(response);
         } else if (isMsalCallback) {
-          // If MSAL processed the callback but returned null (e.g. token already cached),
-          // check if we have an active account or existing auth to redirect
-          const accounts = msalInstance.getAllAccounts();
-          if (accounts && accounts.length > 0) {
-            handleResponse({ account: accounts[0] });
-          } else {
-            const stored = localStorage.getItem('scintilla_auth');
-            if (stored) {
-              window.location.href = 'submit.html';
-            }
+          // handleRedirectPromise returned null even though URL had callback params.
+          // This can happen if the state token mismatched (e.g. user opened the page
+          // in a second tab). Fall back to stored auth if it is still valid.
+          const stored = localStorage.getItem('scintilla_auth');
+          if (stored) {
+            try {
+              const auth = JSON.parse(stored);
+              if (auth.expiresAt && auth.expiresAt > Date.now() && auth.email && auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
+                showStatus('success', `Welcome back, ${escapeHtml(auth.name)}! Redirecting to submission portal...`);
+                setTimeout(() => { window.location.href = 'submit.html'; }, 800);
+                return;
+              }
+            } catch (e) {}
+          }
+          // No usable stored auth — clear callback state and show the sign-in button again
+          showStatus('error', 'Authentication could not be completed. Please try signing in again.');
+          const btn = document.getElementById('signInBtn');
+          if (btn) {
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'Sign in with Microsoft';
           }
         }
       } catch (error) {
