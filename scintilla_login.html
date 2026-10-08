@@ -451,13 +451,20 @@
       _urlParams.has('error') ||
       _urlParams.has('state')
     );
-    const isMsalPopup = isMsalCallback || !!(
+    const isMsalPopup = !!(
       (window.name && window.name.indexOf('msal') !== -1) ||
       (window.opener && window.opener !== window)
     );
 
-    // If inside a popup window (or handling a redirect callback), show auth state
-    if (isMsalPopup) {
+    // If handling a redirect callback in the main tab, or inside a popup window
+    if (isMsalCallback) {
+      const btn = document.getElementById('signInBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.querySelector('span').textContent = 'Authenticating...';
+      }
+      showStatus('loading', '<span class="spinner"></span> Completing sign-in. Redirecting to submission portal...');
+    } else if (isMsalPopup) {
       const btn = document.getElementById('signInBtn');
       if (btn) {
         btn.disabled = true;
@@ -476,6 +483,18 @@
         const response = await msalInstance.handleRedirectPromise();
         if (response) {
           handleResponse(response);
+        } else if (isMsalCallback) {
+          // If MSAL processed the callback but returned null (e.g. token already cached),
+          // check if we have an active account or existing auth to redirect
+          const accounts = msalInstance.getAllAccounts();
+          if (accounts && accounts.length > 0) {
+            handleResponse({ account: accounts[0] });
+          } else {
+            const stored = localStorage.getItem('scintilla_auth');
+            if (stored) {
+              window.location.href = 'submit.html';
+            }
+          }
         }
       } catch (error) {
         handleError(error);
@@ -529,8 +548,8 @@
       };
       localStorage.setItem('scintilla_auth', JSON.stringify(authData));
 
-      // If we are executing inside the popup window, close it cleanly
-      if (isMsalPopup) {
+      // If we are actually executing inside a popup window (opened via window.open), close it cleanly
+      if (isMsalPopup && window.opener && window.opener !== window) {
         showStatus('success', 'Sign-in verified. Closing window...');
         setTimeout(() => {
           try { window.close(); } catch (e) {}
@@ -543,7 +562,7 @@
       // Redirect to the submission form
       setTimeout(() => {
         window.location.href = 'submit.html';
-      }, 1000);
+      }, 800);
     }
 
     /**
