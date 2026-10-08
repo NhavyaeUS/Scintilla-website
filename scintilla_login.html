@@ -448,16 +448,10 @@
       showStatus('error', "Authentication service is unavailable: " + err.message);
     }
 
-    // ─── Popup / redirect-callback detection ─────────────────────
-    // IMPORTANT: We deliberately do NOT rely solely on window.opener here.
-    // Chrome enforces Cross-Origin-Opener-Policy (COOP) headers from Microsoft's login
-    // domain (login.microsoftonline.com), which sets window.opener = null inside the popup
-    // window even when our own server sends 'same-origin-allow-popups'. This means the
-    // classic window.opener check is always false in Chrome, causing the popup to run the
-    // full page init instead of just handling the auth response and closing.
-    //
-    // Fix: detect a MSAL callback by the auth code / state params Microsoft appends to the
-    // redirect URI, regardless of popup vs. redirect flow.
+    // ─── Detect redirect callback from Microsoft ─────────────────
+    // After loginRedirect(), Microsoft returns to this page with ?code=&state= or #code=&state=.
+    // We detect this BEFORE anything else — especially before sessionStorage cleanup,
+    // because MSAL needs its nonce/state keys from sessionStorage to process the auth code.
     const _urlParams = new URLSearchParams(window.location.search);
     const _urlHash   = window.location.hash;
     const isMsalCallback = (
@@ -467,12 +461,8 @@
       _urlParams.has('error') ||
       _urlParams.has('state')
     );
-    const isMsalPopup = !!(
-      (window.name && window.name.indexOf('msal') !== -1) ||
-      (window.opener && window.opener !== window)
-    );
 
-    // If handling a redirect callback in the main tab, or inside a popup window
+    // Show processing state immediately while MSAL resolves the auth code
     if (isMsalCallback) {
       const btn = document.getElementById('signInBtn');
       if (btn) {
@@ -480,13 +470,6 @@
         btn.querySelector('span').textContent = 'Authenticating...';
       }
       showStatus('loading', '<span class="spinner"></span> Completing sign-in. Redirecting to submission portal...');
-    } else if (isMsalPopup) {
-      const btn = document.getElementById('signInBtn');
-      if (btn) {
-        btn.disabled = true;
-        btn.querySelector('span').textContent = 'Authenticating...';
-      }
-      showStatus('loading', '<span class="spinner"></span> Completing sign-in. This window will close automatically...');
     }
 
     // Dynamic MSAL initialization check (MSAL v3+ requires initialize(), MSAL v2 does not)
@@ -580,18 +563,11 @@
       };
       localStorage.setItem('scintilla_auth', JSON.stringify(authData));
 
-      // If we are actually executing inside a popup window (opened via window.open), close it cleanly
-      if (isMsalPopup && window.opener && window.opener !== window) {
-        showStatus('success', 'Sign-in verified. Closing window...');
-        setTimeout(() => {
-          try { window.close(); } catch (e) {}
-        }, 500);
-        return;
-      }
-
+      // ✅ Redirect to submit.html — always, unconditionally.
+      // We use loginRedirect() exclusively; there are NO popup windows in this flow.
+      // The old "Sign-in verified. Closing window..." bug was caused by popup-detection
+      // code incorrectly calling window.close() on the main tab. That code is removed.
       showStatus('success', `Welcome, ${escapeHtml(displayName)}! Redirecting to submission portal...`);
-
-      // Redirect to the submission form
       setTimeout(() => {
         window.location.href = 'submit.html';
       }, 800);
@@ -603,7 +579,7 @@
     function handleError(error) {
       console.error('MSAL Error:', error);
       const btn = document.getElementById('signInBtn');
-      if (btn && !isMsalPopup) {
+      if (btn) {
         btn.disabled = false;
         btn.querySelector('span').textContent = 'Sign in with Microsoft';
       }
@@ -629,11 +605,6 @@
      * Initiate Microsoft SSO login via popup.
      */
     async function signIn() {
-      if (isMsalPopup) {
-        showStatus('error', 'Sign-in is already in progress in another window.');
-        return;
-      }
-
       const btn = document.getElementById('signInBtn');
       btn.disabled = true;
       btn.querySelector('span').textContent = 'Signing in...';
@@ -665,19 +636,6 @@
       }
     }
 
-    // Listen for storage events across windows (allows main tab to detect when the popup saves auth into localStorage)
-    window.addEventListener('storage', function(e) {
-      if (e.key === 'scintilla_auth' && e.newValue && !isMsalPopup) {
-        try {
-          const auth = JSON.parse(e.newValue);
-          if (auth && auth.email && auth.email.endsWith('@' + ALLOWED_DOMAIN)) {
-            showStatus('success', `Welcome, ${escapeHtml(auth.name)}! Redirecting to submission portal...`);
-            setTimeout(() => { window.location.href = 'submit.html'; }, 800);
-          }
-        } catch (err) {}
-      }
-    });
-
     /**
      * Show status message to the user.
      */
@@ -700,7 +658,7 @@
     (function checkExistingAuth() {
       // Do not auto-redirect if this window is currently processing an auth callback
       // (isMsalCallback means we just came back from Microsoft's login page — let initMsal handle it)
-      if (isMsalPopup || isMsalCallback) return;
+      if (isMsalCallback) return; // let initMsal() handle redirect callbacks
 
       try {
         const stored = localStorage.getItem('scintilla_auth');
