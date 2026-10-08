@@ -61,11 +61,20 @@ const securityHeaders = {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
+      // Allow MSAL.js v2 from the official Microsoft CDN
+      scriptSrc: ["'self'", "https://alcdn.msauth.net"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'"],
+      // Allow the MSAL CDN to be pre-fetched; allow data: URIs for inline SVG assets
+      imgSrc: ["'self'", "data:", "https://alcdn.msauth.net"],
+      // Allow MSAL to reach Microsoft's auth + Graph endpoints for token exchange
+      connectSrc: [
+        "'self'",
+        "https://login.microsoftonline.com",
+        "https://login.microsoft.com",
+        "https://graph.microsoft.com",
+        "https://alcdn.msauth.net",
+      ],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],

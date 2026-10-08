@@ -389,6 +389,9 @@
         authority: 'https://login.microsoftonline.com/5beb351c-3fb8-418f-b612-fe36ace96ef3',
         // Where Microsoft redirects after login — must match Azure portal config
         redirectUri: window.location.origin + '/scintilla_login.html',
+        // Prevent MSAL from auto-navigating to the original request URL after redirect;
+        // without this Chrome can enter an infinite redirect loop on the login page.
+        navigateToLoginRequestUrl: false,
       },
       cache: {
         // localStorage keeps MSAL's token cache alive across tab closes and browser restarts.
@@ -397,6 +400,20 @@
         storeAuthStateInCookie: true,
       },
     };
+
+    // ─── Stale interaction state cleanup ─────────────────────────
+    // Chrome and Edge sometimes leave 'msal.interaction.status' = 'interaction_in_progress'
+    // in sessionStorage after a failed or crashed login attempt, permanently blocking future
+    // logins until the tab is closed. Clear it defensively on every page load.
+    (function clearStaleInteractionState() {
+      try {
+        Object.keys(sessionStorage).forEach(function(key) {
+          if (key.indexOf('interaction.status') !== -1 || key.indexOf('msal.') !== -1) {
+            sessionStorage.removeItem(key);
+          }
+        });
+      } catch (e) {}
+    })();
 
     const loginRequest = {
       scopes: ['User.Read'],
@@ -415,13 +432,31 @@
       showStatus('error', "Authentication service is unavailable: " + err.message);
     }
 
-    // Detect if this window was opened as an MSAL popup or iframe
-    const isMsalPopup = !!(
-      (window.opener && window.opener !== window) ||
-      (window.name && window.name.indexOf('msal') !== -1)
+    // ─── Popup / redirect-callback detection ─────────────────────
+    // IMPORTANT: We deliberately do NOT rely solely on window.opener here.
+    // Chrome enforces Cross-Origin-Opener-Policy (COOP) headers from Microsoft's login
+    // domain (login.microsoftonline.com), which sets window.opener = null inside the popup
+    // window even when our own server sends 'same-origin-allow-popups'. This means the
+    // classic window.opener check is always false in Chrome, causing the popup to run the
+    // full page init instead of just handling the auth response and closing.
+    //
+    // Fix: detect a MSAL callback by the auth code / state params Microsoft appends to the
+    // redirect URI, regardless of popup vs. redirect flow.
+    const _urlParams = new URLSearchParams(window.location.search);
+    const _urlHash   = window.location.hash;
+    const isMsalCallback = (
+      _urlHash.includes('code=') ||
+      _urlHash.includes('error=') ||
+      _urlParams.has('code') ||
+      _urlParams.has('error') ||
+      _urlParams.has('state')
+    );
+    const isMsalPopup = isMsalCallback || !!(
+      (window.name && window.name.indexOf('msal') !== -1) ||
+      (window.opener && window.opener !== window)
     );
 
-    // If inside a popup window, prevent users from clicking sign-in again (which causes block_nested_popups)
+    // If inside a popup window (or handling a redirect callback), show auth state
     if (isMsalPopup) {
       const btn = document.getElementById('signInBtn');
       if (btn) {
@@ -528,18 +563,10 @@
       if (code === 'user_cancelled') {
         showStatus('error', 'Sign-in was cancelled. Click the button to try again.');
       } else if (code === 'popup_window_error' || code === 'empty_window_error' || msg.includes('popup_window_error')) {
-        // If Edge, Chrome, or any browser blocks popups, smoothly fall back to redirect flow
-        showStatus('loading', '<span class="spinner"></span> Pop-up blocked by browser. Redirecting directly to Microsoft sign-in...');
-        setTimeout(() => {
-          try {
-            msalInstance.loginRedirect(loginRequest);
-          } catch (e) {
-            showStatus('error', 'Redirect sign-in failed. Please allow pop-ups for this site and try again.');
-            if (btn) btn.disabled = false;
-          }
-        }, 800);
+        // Popup was blocked or closed unexpectedly (should rarely happen since we now use redirect flow)
+        showStatus('error', 'Sign-in popup was blocked or closed. Please click the button to try again.');
       } else if (code === 'block_nested_popups' || msg.includes('block_nested_popups') || code === 'interaction_in_progress' || msg.includes('interaction_in_progress')) {
-        showStatus('error', 'Sign-in is already in progress. Please close any other open login windows, wait a moment, and click the button to try again.');
+        showStatus('error', 'Sign-in is already in progress. Please wait a moment and click the button to try again.');
       } else if (msg.includes('9002326') || msg.includes('Cross-origin token redemption')) {
         showStatus('error', '<strong>Azure AD Configuration Error (AADSTS9002326):</strong><br>The college Azure AD App Registration has the Redirect URI registered under <em>"Web"</em> instead of <em>"Single-Page Application" (SPA)</em>.<br><br>Please ask the IT admin to move the redirect URL to <strong>Single-page application</strong> in Azure Portal.');
       } else {
@@ -567,11 +594,23 @@
       }
 
       try {
-        // Direct invocation preserves the user gesture click token in Chrome (preventing pop-up blocker)
-        const response = await msalInstance.loginPopup(loginRequest);
-        handleResponse(response);
+        // Primary flow: loginRedirect — navigates the current tab to Microsoft login and back.
+        // This is the most reliable flow across ALL browsers (Chrome, Edge, Firefox, Brave)
+        // because it does not depend on window.opener or cross-origin popup communication.
+        // The result is handled by handleRedirectPromise() inside initMsal() on page load.
+        await msalInstance.loginRedirect(loginRequest);
       } catch (error) {
-        handleError(error);
+        // If redirect is somehow blocked (rare), fall back to popup
+        if (error && (error.errorCode === 'redirect_in_iframe' || error.message.includes('redirect'))) {
+          try {
+            const response = await msalInstance.loginPopup(loginRequest);
+            handleResponse(response);
+          } catch (popupErr) {
+            handleError(popupErr);
+          }
+        } else {
+          handleError(error);
+        }
       }
     }
 
@@ -608,8 +647,9 @@
     //  On page load: check if user is already authenticated
     // ═══════════════════════════════════════════════════════════
     (function checkExistingAuth() {
-      // Do not auto-redirect if this window is an active auth popup
-      if (isMsalPopup) return;
+      // Do not auto-redirect if this window is currently processing an auth callback
+      // (isMsalCallback means we just came back from Microsoft's login page — let initMsal handle it)
+      if (isMsalPopup || isMsalCallback) return;
 
       try {
         const stored = localStorage.getItem('scintilla_auth');
