@@ -12,7 +12,6 @@
     href="https://fonts.googleapis.com/css2?family=Khand:wght@700&family=Hind:wght@400;500&family=Fragment+Mono&display=swap"
     rel="stylesheet" />
 
-  <!-- MSAL.js v2 Browser — Microsoft Authentication Library -->
   <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
 
   <style>
@@ -35,7 +34,6 @@
       cursor: url('Group 129.svg') 12 4, auto;
     }
 
-    /* ── Global clickable-element cursor ── */
     a,
     a *,
     button,
@@ -57,7 +55,6 @@
       cursor: not-allowed !important;
     }
 
-    /* ── PAGE WRAPPER ── */
     .page {
       position: relative;
       min-height: 100vh;
@@ -66,7 +63,6 @@
       overflow: hidden;
     }
 
-    /* ── NAVBAR ── */
     nav {
       position: relative;
       z-index: 10;
@@ -82,7 +78,6 @@
       color: #1a1a1a;
     }
 
-    /* ── MOON BASE ── */
     .moon {
       position: absolute;
       background-image: url('assets/moon_asset.png');
@@ -92,9 +87,7 @@
       pointer-events: none;
     }
 
-    /* ── INDIVIDUAL MOONS (FIGMA → % CONVERSION) ── */
 
-    /* TOP CENTER */
     .moon1 {
       left: 54.4%;
       top: -26.5%;
@@ -104,7 +97,6 @@
       z-index: 1;
     }
 
-    /* RIGHT BIG */
     .moon2 {
       left: 75.5%;
       top: 23.7%;
@@ -114,7 +106,6 @@
       z-index: 2;
     }
 
-    /* BOTTOM LEFT BIG */
     .moon3 {
       left: -8.2%;
       top: 55.1%;
@@ -124,7 +115,6 @@
       z-index: 1;
     }
 
-    /* TOP LEFT SMALL */
     .moon4 {
       left: 7.1%;
       top: 14.8%;
@@ -134,7 +124,6 @@
       z-index: 3;
     }
 
-    /* BOTTOM RIGHT SMALL */
     .moon5 {
       left: 75.5%;
       top: 88.2%;
@@ -144,7 +133,6 @@
       z-index: 2;
     }
 
-    /* ── CENTRE CONTENT ── */
     .center {
       position: relative;
       z-index: 5;
@@ -191,7 +179,6 @@
       margin-bottom: 30px;
     }
 
-    /* ── BUTTON ── */
     .btn-ms {
       display: inline-flex;
       align-items: center;
@@ -230,7 +217,6 @@
       text-decoration: underline;
     }
 
-    /* ── STATUS MESSAGE ── */
     .auth-status {
       font-family: 'Fragment Mono', monospace;
       font-size: 13px;
@@ -264,7 +250,6 @@
       color: #856404;
     }
 
-    /* ── NOTE ── */
     .note-label {
       font-family: 'Fragment Mono', monospace;
       font-size: clamp(12px, 1vw, 14px);
@@ -279,7 +264,6 @@
       color: #1a1a1a;
     }
 
-    /* ── SPINNER ── */
     .spinner {
       display: inline-block;
       width: 16px;
@@ -296,7 +280,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav {
         padding: 14px 20px;
@@ -340,16 +323,13 @@
 <body>
   <div class="page">
 
-    <!-- Moons -->
     <img src="assets/moon_asset.png" class="moon moon1" alt="">
     <img src="assets/moon_asset.png" class="moon moon2" alt="">
     <img src="assets/moon_asset.png" class="moon moon3" alt="">
     <img src="assets/moon_asset.png" class="moon moon4" alt="">
     <img src="assets/moon_asset.png" class="moon moon5" alt="">
-    <!-- Nav -->
     <nav><a href="index.html" style="text-decoration: none;"><span>HOME</span></a></nav>
 
-    <!-- Centre -->
     <main class="center">
       <h1 class="title">Scintilla</h1>
       <p class="subtitle">Igniting Minds. Illuminating Ideas.</p>
@@ -357,10 +337,8 @@
       <p class="section-label">Access Submission Portal</p>
       <p class="desc">Sign in using your college Microsoft account to submit your work</p>
 
-      <!-- Auth status message -->
       <div class="auth-status" id="authStatus"></div>
 
-      <!-- Real Microsoft SSO button -->
       <button class="btn-ms" id="signInBtn" onclick="signIn()">
         <img
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAvVBMVEX////zUSN/uQICpO//uQH///39//r//fLr///tsxD//+Z5qQDxUSX//9wAkdHu///+/+vQjXz/9O1pudHQjXPR+PnTSx1/tAD7+coAo/HhUCXu+dP5//oAm+N4rgCAuAGnwm0Ak9e2QRXESCHBiXv/9fLu+NlvnwBzmgDVUivHiYT/9Pbr+stwqAB4pADAinLCkGfVs6Srv3T9+P/3/+/J+fr+87f7+MoAgbkNjslqqsb+78TqvD7frCJssME4QYTWAAACUElEQVR4nO3dXXPSQBSA4ZV4diEFkqKtDa6iVuoH9atUW9T6/39WN9DYXtSZwslKyLxvh7A3zeyTXTq92cEYIiIiIiIiIiIiIiIiIiIiIqKGJlJetj2LmMntpXKuNWh6d+fZfmFDUz5Lqe6irAbJv2bolK0+gTZPVeXRjOLeHKo6fjsVL3Lybk/V+zzaKrrDvqrx/sh7sc9fdjqTyaTTWb6tPZjspTGFjzQFoQ1rWAo1Idyu0CPceWH7d2n7he3fpQgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIEOEGwv7yZ+1Bf7w/tV7saWOF4o7Hqj58nDln5PTTM1Wf4wntl6eqvn6biTfm5OyVqjMXbZeKG2nKB84Yn4lLc12NPU8szhqTeTeaWk1iI07x78Nba3DbvGTm4aOoI8Zbw/IY9ebnr8XMZEnzmW4WNWnuvbfi2YffFevDAs7n/ly1hOFe8YgHur4fZOfOzPMfRxt3EV6DeH9Ls8vXNw1vXg8aVG/Dxc+udWJ//e6puor3P013mBRFkRSr64MHSTV48SQzYZMd9R6r6g1iCsNEN6lIdkeoqBJeINx5Yft3KUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRPh/hZxGQBhTuFAJkzp3aZyDpNnlYqhp8WclvKrhdF6krwXOuqqy8nisiEsHqtKIR53rqcHf6UxERERERERERERERERERERERERb7hpQ1W08w53kmAAAAABJRU5ErkJggg=="
@@ -375,43 +353,22 @@
   </div>
 
   <script>
-    // ═══════════════════════════════════════════════════════════
-    //  MSAL.js Configuration — Microsoft SSO for Scintilla
-    // ═══════════════════════════════════════════════════════════
 
     const ALLOWED_DOMAIN = 'snuchennai.edu.in';
 
     const msalConfig = {
       auth: {
-        // Azure AD App Registration — Client ID
         clientId: '14352224-eae3-4dd0-a55a-7d89c31beeb8',
-        // Azure AD Tenant — restricts login to this organization only
         authority: 'https://login.microsoftonline.com/5beb351c-3fb8-418f-b612-fe36ace96ef3',
-        // Where Microsoft redirects after login — must match Azure portal config
         redirectUri: window.location.origin + '/scintilla_login.html',
-        // Prevent MSAL from auto-navigating to the original request URL after redirect;
-        // without this Chrome can enter an infinite redirect loop on the login page.
         navigateToLoginRequestUrl: false,
       },
       cache: {
-        // localStorage keeps MSAL's token cache alive across tab closes and browser restarts.
-        // storeAuthStateInCookie: true is required by Microsoft Edge to preserve auth state across security zones.
         cacheLocation: 'localStorage',
         storeAuthStateInCookie: true,
       },
     };
 
-    // ─── Stale interaction state cleanup ─────────────────────────
-    // Chrome and Edge sometimes leave 'msal.interaction.status' = 'interaction_in_progress'
-    // in sessionStorage after a failed or crashed login attempt, permanently blocking future
-    // logins until the tab is closed.
-    //
-    // CRITICAL: We must NOT clear sessionStorage when Microsoft has just redirected us back
-    // with an auth code (?code=...&state=...). MSAL stores the nonce, state, and code_verifier
-    // in sessionStorage BEFORE the redirect, and reads them back on return to validate the
-    // callback. Clearing them first causes handleRedirectPromise() to return null — which is
-    // exactly why a page reload was needed (the reload preserved sessionStorage).
-    // Only clear on a fresh page load (no redirect callback in progress).
     const _urlParamsEarly = new URLSearchParams(window.location.search);
     const _hashEarly = window.location.hash;
     const _isCallback = (
@@ -419,7 +376,6 @@
       _urlParamsEarly.has('code') || _urlParamsEarly.has('error') || _urlParamsEarly.has('state')
     );
     if (!_isCallback) {
-      // Safe to clear — this is a fresh page load, not a redirect-back from Microsoft.
       (function clearStaleInteractionState() {
         try {
           Object.keys(sessionStorage).forEach(function(key) {
@@ -436,7 +392,6 @@
       prompt: 'select_account',
     };
 
-    // Initialize MSAL
     var msalInstance;
     try {
       if (typeof msal === 'undefined') {
@@ -448,10 +403,6 @@
       showStatus('error', "Authentication service is unavailable: " + err.message);
     }
 
-    // ─── Detect redirect callback from Microsoft ─────────────────
-    // After loginRedirect(), Microsoft returns to this page with ?code=&state= or #code=&state=.
-    // We detect this BEFORE anything else — especially before sessionStorage cleanup,
-    // because MSAL needs its nonce/state keys from sessionStorage to process the auth code.
     const _urlParams = new URLSearchParams(window.location.search);
     const _urlHash   = window.location.hash;
     const isMsalCallback = (
@@ -462,7 +413,6 @@
       _urlParams.has('state')
     );
 
-    // Show processing state immediately while MSAL resolves the auth code
     if (isMsalCallback) {
       const btn = document.getElementById('signInBtn');
       if (btn) {
@@ -472,26 +422,16 @@
       showStatus('loading', '<span class="spinner"></span> Completing sign-in. Redirecting to submission portal...');
     }
 
-    // Dynamic MSAL initialization check (MSAL v3+ requires initialize(), MSAL v2 does not)
     async function initMsal() {
       if (!msalInstance) return;
       try {
         if (typeof msalInstance.initialize === 'function') {
           await msalInstance.initialize();
         }
-        // handleRedirectPromise() MUST be called on every page load.
-        // When we are on the redirect-callback URL (isMsalCallback=true), MSAL reads the
-        // code+state from the URL and the nonce from sessionStorage, exchanges the code for
-        // tokens, and returns a full AuthenticationResult. This only works if sessionStorage
-        // was NOT cleared before this call (see the fix above).
         const response = await msalInstance.handleRedirectPromise();
         if (response) {
-          // Got a fresh token from the redirect — store it and navigate to submit page
           handleResponse(response);
         } else if (isMsalCallback) {
-          // handleRedirectPromise returned null even though URL had callback params.
-          // This can happen if the state token mismatched (e.g. user opened the page
-          // in a second tab). Fall back to stored auth if it is still valid.
           const stored = localStorage.getItem('scintilla_auth');
           if (stored) {
             try {
@@ -503,7 +443,6 @@
               }
             } catch (e) {}
           }
-          // No usable stored auth — clear callback state and show the sign-in button again
           showStatus('error', 'Authentication could not be completed. Please try signing in again.');
           const btn = document.getElementById('signInBtn');
           if (btn) {
@@ -516,13 +455,8 @@
       }
     }
 
-    // Handle redirect response (if user was redirected back from Microsoft)
     initMsal();
 
-    /**
-     * Handle the authentication response from Microsoft.
-     * Validates the email domain and stores auth info in localStorage.
-     */
     function handleResponse(response) {
       if (!response || !response.account) return;
 
@@ -534,7 +468,6 @@
       ).toLowerCase();
       const displayName = account.name || (account.idTokenClaims && account.idTokenClaims.name) || '';
 
-      // Verify the email domain
       if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
         showStatus('error', `Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed. You signed in as: ${escapeHtml(email || 'unknown account')}. Please sign in using your college Microsoft account.`);
         const btn = document.getElementById('signInBtn');
@@ -542,7 +475,6 @@
           btn.disabled = false;
           btn.querySelector('span').textContent = 'Sign in with Microsoft';
         }
-        // Silently clear active account in MSAL without spawning secondary popups (which fail/block in Chrome)
         try {
           if (typeof msalInstance.setActiveAccount === 'function') {
             msalInstance.setActiveAccount(null);
@@ -551,31 +483,21 @@
         return;
       }
 
-      // Store authenticated user info in localStorage (persists across tab closes and syncs across windows)
       const authData = {
         name: displayName,
         email: email,
-        // Save the ID token so submit.html can send it to the backend for server-side identity verification.
         accessToken: response.idToken,
         timestamp: Date.now(),
-        // Token expiry — sync to the actual MSAL token expiry if available, else default to 1 hour
         expiresAt: response.expiresOn ? response.expiresOn.getTime() : Date.now() + (60 * 60 * 1000),
       };
       localStorage.setItem('scintilla_auth', JSON.stringify(authData));
 
-      // ✅ Redirect to submit.html — always, unconditionally.
-      // We use loginRedirect() exclusively; there are NO popup windows in this flow.
-      // The old "Sign-in verified. Closing window..." bug was caused by popup-detection
-      // code incorrectly calling window.close() on the main tab. That code is removed.
       showStatus('success', `Welcome, ${escapeHtml(displayName)}! Redirecting to submission portal...`);
       setTimeout(() => {
         window.location.href = 'submit.html';
       }, 800);
     }
 
-    /**
-     * Handle authentication errors.
-     */
     function handleError(error) {
       console.error('MSAL Error:', error);
       const btn = document.getElementById('signInBtn');
@@ -590,7 +512,6 @@
       if (code === 'user_cancelled') {
         showStatus('error', 'Sign-in was cancelled. Click the button to try again.');
       } else if (code === 'popup_window_error' || code === 'empty_window_error' || msg.includes('popup_window_error')) {
-        // Popup was blocked or closed unexpectedly (should rarely happen since we now use redirect flow)
         showStatus('error', 'Sign-in popup was blocked or closed. Please click the button to try again.');
       } else if (code === 'block_nested_popups' || msg.includes('block_nested_popups') || code === 'interaction_in_progress' || msg.includes('interaction_in_progress')) {
         showStatus('error', 'Sign-in is already in progress. Please wait a moment and click the button to try again.');
@@ -601,9 +522,6 @@
       }
     }
 
-    /**
-     * Initiate Microsoft SSO login via popup.
-     */
     async function signIn() {
       const btn = document.getElementById('signInBtn');
       btn.disabled = true;
@@ -616,13 +534,8 @@
       }
 
       try {
-        // Primary flow: loginRedirect — navigates the current tab to Microsoft login and back.
-        // This is the most reliable flow across ALL browsers (Chrome, Edge, Firefox, Brave)
-        // because it does not depend on window.opener or cross-origin popup communication.
-        // The result is handled by handleRedirectPromise() inside initMsal() on page load.
         await msalInstance.loginRedirect(loginRequest);
       } catch (error) {
-        // If redirect is somehow blocked (rare), fall back to popup
         if (error && (error.errorCode === 'redirect_in_iframe' || error.message.includes('redirect'))) {
           try {
             const response = await msalInstance.loginPopup(loginRequest);
@@ -636,29 +549,18 @@
       }
     }
 
-    /**
-     * Show status message to the user.
-     */
     function showStatus(type, message) {
       const el = document.getElementById('authStatus');
       el.className = 'auth-status ' + type;
       el.innerHTML = message;
     }
 
-    /**
-     * Escape HTML to prevent XSS in status messages.
-     */
     function escapeHtml(str) {
       return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  On page load: check if user is already authenticated
-    // ═══════════════════════════════════════════════════════════
     (function checkExistingAuth() {
-      // Do not auto-redirect if this window is currently processing an auth callback
-      // (isMsalCallback means we just came back from Microsoft's login page — let initMsal handle it)
-      if (isMsalCallback) return; // let initMsal() handle redirect callbacks
+      if (isMsalCallback) return;
 
       try {
         const stored = localStorage.getItem('scintilla_auth');
@@ -668,11 +570,10 @@
             showStatus('success', `Already signed in as ${escapeHtml(auth.name)}. Redirecting...`);
             setTimeout(() => { window.location.href = 'submit.html'; }, 800);
           } else {
-            // Expired or invalid — clear it
             localStorage.removeItem('scintilla_auth');
           }
         }
-      } catch (e) { /* ignore parse errors */ }
+      } catch (e) { }
     })();
   </script>
 </body>

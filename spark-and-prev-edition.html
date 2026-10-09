@@ -15,7 +15,6 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--cream);color:var(--ink);font-family:"Space Mono",ui-monospace,monospace;cursor:url('Group 129.svg') 12 4,auto}
 
-/* ── Global clickable-element cursor ── */
 a,
 a *,
 button,
@@ -29,7 +28,6 @@ button *,
 img{max-width:100%;display:block}
 .sec{position:relative;overflow:hidden;padding:clamp(36px,4.5vw,64px) clamp(20px,5vw,80px)}
 
-/* ---------- shared reveal-on-scroll ---------- */
 [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.22,1,.36,1) var(--d,0ms),transform .7s cubic-bezier(.22,1,.36,1) var(--d,0ms)}
 [data-reveal].vis{opacity:1;transform:translateY(0)}
 .hl{--c:var(--citrus);background-image:linear-gradient(var(--c) 0 0);background-repeat:no-repeat;background-size:0% 78%;background-position:0 88%;
@@ -41,7 +39,6 @@ img{max-width:100%;display:block}
   transform:scaleX(0);transform-origin:left;transition:transform .8s cubic-bezier(.22,1,.36,1) .1s}
 .scribble.vis::after{transform:scaleX(1)}
 
-/* ================= THE SPARK ================= */
 .spk{background:
   radial-gradient(3px 3px at 12% 20%,#2E5AA733 60%,transparent 62%),
   radial-gradient(3px 3px at 85% 65%,#FFA62B44 60%,transparent 62%),
@@ -70,7 +67,6 @@ img{max-width:100%;display:block}
 .hl-citrus{--c:var(--citrus)}
 .hl-sea{--c:var(--sea)}
 
-/* ================= PREVIOUS EDITION ================= */
 .pe{background:var(--cream);border-top:none;border-bottom:none;overflow:visible;position:relative;z-index:2}
 .pe-orbit{position:absolute;top:-240px;right:clamp(-60px,-2vw,40px);width:500px;height:500px;border:1.5px dashed var(--sea);border-radius:50%;opacity:.65;animation:spin 40s linear infinite;pointer-events:none;z-index:1}
 .pe-orbit::after{content:"";position:absolute;top:50%;left:-4px;width:8px;height:8px;border-radius:50%;background:var(--citrus);transform:translateY(-50%)}
@@ -109,7 +105,6 @@ img{max-width:100%;display:block}
 </head>
 <body>
 
-<!-- ================= THE SPARK ================= -->
 <section class="sec spk" id="spark">
   <div class="spk-grid">
     <figure class="spk-photo">
@@ -135,7 +130,6 @@ img{max-width:100%;display:block}
   </div>
 </section>
 
-<!-- ================= PREVIOUS EDITION ================= -->
 <section class="sec pe" id="prev-edition">
   <div class="pe-orbit" aria-hidden="true"></div>
 

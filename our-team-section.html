@@ -10,7 +10,6 @@
 <style>
 body{margin:0;background:#FFF7DC;cursor:url('Group 129.svg') 12 4,auto}
 
-/* ── Global clickable-element cursor ── */
 a,
 a *,
 button,
@@ -25,7 +24,6 @@ button *,
   cursor: url('Group 26.svg') 8 2, pointer !important;
 }
 
-/* ===== OUR TEAM SECTION (scoped: .st-) — copy from here ===== */
 .st-team{
   --ink:#14264d; --paper:#FFFDF5; --step:clamp(20px,9vw,180px); --tabh:52px;
   position:relative; padding:clamp(56px,9vw,120px) clamp(16px,5vw,64px);
@@ -122,12 +120,10 @@ button *,
 @media (prefers-reduced-motion:reduce){
   .st-team *,.st-team *::before{animation:none!important;transition-duration:.01s!important;transition-delay:0s!important}
 }
-/* ===== end section styles ===== */
 </style>
 </head>
 <body>
 
-<!-- ===== OUR TEAM SECTION markup ===== -->
 <section class="st-team" id="team" aria-labelledby="st-title">
   <div class="st-head">
     <h2 id="st-title">Our Team</h2>
@@ -184,7 +180,7 @@ button *,
      ["Nhavyae U.S.",3,"B.Tech CSE IoT"],["Srijai S.",3,"B.Tech IoT"]]}
   ];
   var ord={1:"1st",2:"2nd",3:"3rd",4:"4th"}, root=document.getElementById("stStack");
-  T.forEach(function(g){if(!g.faculty)g.items.sort(function(a,b){return b[1]-a[1]})}); /* seniors first */
+  T.forEach(function(g){if(!g.faculty)g.items.sort(function(a,b){return b[1]-a[1]})});
 
   root.innerHTML=T.map(function(g,i){
     var slips=g.items.map(function(p,n){
