@@ -594,24 +594,30 @@
   };
 
   async function refreshTokenSilently() {
+    // Always try stored token first — it's the fastest and most reliable path
+    const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+    if (stored.accessToken && stored.expiresAt && stored.expiresAt > Date.now()) {
+      // Still valid — use it directly without an MSAL round-trip
+      return stored.accessToken;
+    }
+
+    // Stored token is missing or expired — try MSAL silent refresh
     try {
-      let msalInstance;
-      if (typeof msal !== 'undefined') {
-        msalInstance = new msal.PublicClientApplication(_msalConfig);
-        if (typeof msalInstance.initialize === 'function') {
-          await msalInstance.initialize();
-        }
-      } else {
-        const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
-        return stored.accessToken || null;
+      if (typeof msal === 'undefined') {
+        // MSAL library didn't load — nothing we can do
+        localStorage.removeItem('scintilla_auth');
+        window.location.href = 'scintilla_login.html';
+        return null;
+      }
+
+      const msalInstance = new msal.PublicClientApplication(_msalConfig);
+      if (typeof msalInstance.initialize === 'function') {
+        await msalInstance.initialize();
       }
 
       const accounts = msalInstance.getAllAccounts();
       if (!accounts || accounts.length === 0) {
-        const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
-        if (stored.accessToken && stored.expiresAt && stored.expiresAt > Date.now()) {
-          return stored.accessToken;
-        }
+        // No MSAL session either — session fully expired, send to login
         localStorage.removeItem('scintilla_auth');
         window.location.href = 'scintilla_login.html';
         return null;
@@ -622,7 +628,7 @@
         account: accounts[0],
       });
 
-      const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+      // Update stored auth with fresh token
       stored.accessToken = silentResult.idToken;
       stored.expiresAt = silentResult.expiresOn
         ? silentResult.expiresOn.getTime()
@@ -637,7 +643,7 @@
         window.location.href = 'scintilla_login.html';
         return null;
       }
-      const stored = JSON.parse(localStorage.getItem('scintilla_auth') || '{}');
+      // Network blip or other transient error — return whatever we have
       return stored.accessToken || null;
     }
   }
@@ -862,7 +868,13 @@
 
     try {
       const accessToken = await refreshTokenSilently();
-      if (!accessToken) return;
+      if (!accessToken) {
+        // Token could not be obtained — show error and re-enable button
+        showError('Session expired. Please log in again.');
+        document.getElementById('submitAllBtn').disabled = false;
+        document.getElementById('submitAllBtn').textContent = 'Submit All Entries';
+        return;
+      }
 
       const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       const API_BASE = isLocal && window.location.port !== '3000'
